@@ -14,8 +14,6 @@ import ReviewComponent from "../../components/ReviewComponent";
 import tailwind from "tailwind-rn";
 
 export default function Review() {
-  const navigation = useNavigation();
-
   return (
     <ScrollView style={[tailwind("flex-1"), { backgroundColor: "#f5f5f5" }]}>
       <Header color="#FFE694" />
@@ -119,14 +117,15 @@ const styles = StyleSheet.create({
     shadowOffset: { width: -5, height: 2 },
   },
   imageContainer: {
-    width: "fit-content",
+    width: "auto",
+    marginVertical: 10,
   },
   textContainer: {
     width: "auto",
     alignItems: "center",
   },
   imageSmall: {
-    width: 65,
+    width: 100,
     height: 90,
     resizeMode: "contain",
   },

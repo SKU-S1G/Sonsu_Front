@@ -4,6 +4,7 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -20,7 +21,7 @@ export default function Study() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <SpeedBack />
+      <SpeedBack heightMultiplier={1.88} />
       <TouchableOpacity
         style={styles.backButton}
         onPress={() => navigation.goBack()}
@@ -47,23 +48,33 @@ export default function Study() {
         </Text>
       </View>
 
-      {/* 카메라 비디오 스트리밍 WebView */}
+      {/* 카메라 비디오 스트리밍 WebView or iframe */}
       <View style={styles.cameraFeedWrapper}>
-        <WebView
-          source={{ uri: `${serverIP}/video_feed` }}
-          style={styles.cameraFeed}
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-          originWhitelist={["*"]}
-          allowsFullscreenVideo={true}
-          allowsInlineMediaPlayback={true} // 추가된 속성
-          mediaPlaybackRequiresUserAction={false} // 추가된 속성
-          onError={(error) => console.log("WebView error:", error)}
-          onHttpError={(syntheticEvent) => {
-            const { nativeEvent } = syntheticEvent;
-            console.log("HTTP error: ", nativeEvent);
-          }}
-        />
+        {Platform.OS === "web" ? (
+          <iframe
+            src={`${serverIP}/video_feed`}
+            style={styles.cameraFeed}
+            width="100%"
+            height="100%"
+            allowFullScreen
+          />
+        ) : (
+          <WebView
+            source={{ uri: `${serverIP}/video_feed` }}
+            style={styles.cameraFeed}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+            originWhitelist={["*"]}
+            allowsFullscreenVideo={true}
+            allowsInlineMediaPlayback={true} // 추가된 속성
+            mediaPlaybackRequiresUserAction={false} // 추가된 속성
+            onError={(error) => console.log("WebView error:", error)}
+            onHttpError={(syntheticEvent) => {
+              const { nativeEvent } = syntheticEvent;
+              console.log("HTTP error: ", nativeEvent);
+            }}
+          />
+        )}
       </View>
 
       {/* 혼자 해보기 버튼 */}
@@ -114,7 +125,6 @@ const styles = StyleSheet.create({
   cameraFeedWrapper: {
     width: 350,
     height: 197,
-    borderRadius: 12,
     overflow: "hidden",
     marginTop: 40,
   },

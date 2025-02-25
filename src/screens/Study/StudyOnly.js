@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SpeedBack from '../../components/SpeedBack';
 import { WebView } from 'react-native-webview'; // WebView import 추가
@@ -16,17 +16,26 @@ export default function StudyOnly() {
   return (
     <SafeAreaView style={styles.container}>
       <SpeedBack />
+
       <TouchableOpacity
         style={styles.backButton}
         onPress={() => navigation.goBack()}
       >
         <View style={styles.screenContainer}>
+          <Image
+            source={require("../../../assets/images/SonsuLogo.png")}
+            style={{ width: 30, height: 30 }}
+          />
           <Text style={styles.title}>
             {"Step "}
             {lesson.id}. {topic}
           </Text>
         </View>
       </TouchableOpacity>
+
+      <View style={styles.desContainer}>
+        <Text style={{ fontSize: 23, fontWeight: "bold" }}>혼자해보기</Text>
+      </View>
 
       {/* 카메라 비디오 스트리밍 WebView */}
       <View style={styles.cameraFeedWrapper}>
@@ -46,6 +55,24 @@ export default function StudyOnly() {
           }}
         />
       </View>
+
+      <View style={{ marginTop: 30 }}>
+        <Text style={{ fontSize: 15,  }}>
+          혼자서 학습해보세요!
+        </Text>
+      </View>
+
+      <View style={{ marginTop: 40 }}>
+        <Text style={{ fontSize: 25, fontWeight: 'bold' }}>
+          '안녕하세요'
+        </Text>
+      </View>
+
+      <View style={{ marginTop: 40 }}>
+        <Text style={{ fontSize: 25, color: 'red' }}>
+          정확도 80%
+        </Text>
+      </View>
     </SafeAreaView> 
   );
 }
@@ -58,12 +85,17 @@ const styles = StyleSheet.create({
   },
   screenContainer: {
     flex: 1,
+    flexDirection: 'row',
+    alignSelf: 'center',
+    marginLeft: 10,
   },
   title: {
     fontSize: 22,
-    marginTop: 20,
-    textAlign: "start",
     marginLeft: 10,
+  },
+  desContainer: {
+    marginTop: 30,
+    width: 350,
   },
   backButton: {
     padding: 10,
@@ -73,10 +105,10 @@ const styles = StyleSheet.create({
   },
   cameraFeedWrapper: {
     width: '100%',
-    height: 440,
+    height: 430,
     borderRadius: 12,
     overflow: "hidden",
-    marginTop: 40,
+    marginTop: 20,
     aspectRatio: 16 / 9,
   },
   cameraFeed: {
