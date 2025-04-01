@@ -4,7 +4,6 @@ import { useFonts } from "expo-font";
 import { customFonts } from "../../../src/constants/fonts";
 import { LinearGradient } from "expo-linear-gradient";
 import MaskedView from "@react-native-masked-view/masked-view";
-import Header from "../../components/Header";
 import SpeedBack from "../../components/SpeedBack";
 import { useNavigation } from "@react-navigation/native";
 

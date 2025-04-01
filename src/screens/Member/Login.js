@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ const Login = () => {
   const navigation = useNavigation();
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
+  const passwordInputRef = useRef(null);
 
   const handleLogin = () => {
     axios
@@ -60,19 +61,23 @@ const Login = () => {
         <View style={styles.loginInput}>
           <TextInput
             style={styles.input}
+            autoCapitalize="none"
             placeholder="아이디"
             placeholderTextColor="#aaa"
             value={id}
             onChangeText={setId}
+            onSubmitEditing={() => passwordInputRef.current.focus()}
           />
 
           <TextInput
             style={styles.input}
+            autoCapitalize="none"
             placeholder="비밀번호"
             placeholderTextColor="#aaa"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
+            onSubmitEditing={handleLogin}
           />
 
           <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
