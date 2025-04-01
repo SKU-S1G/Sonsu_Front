@@ -1,23 +1,87 @@
-import React from "react";
-import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
-import { useFonts } from "expo-font";
-import { customFonts } from "../../../src/constants/fonts";
+import React, {useState, useEffect} from "react";
+import { View, StyleSheet, Text, Image, TouchableOpacity, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import MaskedView from "@react-native-masked-view/masked-view";
 import SpeedBack from "../../components/SpeedBack";
 import { useNavigation } from "@react-navigation/native";
+import { WebView } from "react-native-webview";
+import { API_URL } from "../../../config";
+import axios from "axios";
 
-export default function OXGame() {
-  const [fontsLoaded] = useFonts(customFonts);
+export default function OXGame () {
+  const [quizzes, setQuizzes] = useState([]);
+  const [sessionId, setSessionId] = useState(null);
+  const [userAnswers, setUserAnswers] = useState([]);
+  const [animation, setAnimation] = useState(null);
+
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigation = useNavigation();
 
-  if (!fontsLoaded) {
-    return (
-      <View>
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
+  useEffect(() => {
+    const fetchQuizzes = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/quiz/generate`);
+        setQuizzes(res.data.quizzes);
+        setSessionId(res.data.sessionId);
+        setUserAnswers(new Array(res.data.quizzes.length).fill(null));
+        setAnimation(res.data.quizzes[0]?.animation_path || null);
+      } catch (err) {
+        console.error("퀴즈 불러오기 실패:", err);
+      }
+    };
+
+    fetchQuizzes();
+  }, []);
+
+  const handleAnswer = (answer) => {
+    const updatedAnswers = [...userAnswers];
+    updatedAnswers[currentQuestion] = {
+      quiz_id: quizzes[currentQuestion].quiz_id,
+      answer: answer,
+    };
+    setUserAnswers(updatedAnswers);
+
+    // 다음 문제로 이동 (마지막 문제라면 이동 없이 대기)
+    if (currentQuestion < quizzes.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+      setAnimation(quizzes[currentQuestion + 1].animation_path);
+    }
+  };
+
+  useEffect(() => {
+    if (userAnswers.every((ans) => ans !== null) && quizzes.length > 0) {
+      submitQuiz();
+    }
+  }, [userAnswers]);
+
+  const submitQuiz = async () => {
+    if (isSubmitting) {
+      Alert.alert("이미 제출하셨습니다.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const res = await axios.post(`${API_URL}/quiz/check`, {
+        sessionId: sessionId,
+        answers: userAnswers,
+      });
+      console.log(res.data);
+      if (res.status === 200) {
+        Alert.alert("채점 결과", `점수: ${res.data.score} / ${res.data.total}`);
+        navigation.navigate("Review");
+      }
+    } catch (err) {
+      console.error("퀴즈 제출 실패:", err);
+      Alert.alert("오류", "퀴즈 제출에 실패했습니다.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  useEffect(() => {
+    console.log(userAnswers);
+  }, [userAnswers]);
 
   return (
     <View>
@@ -46,20 +110,35 @@ export default function OXGame() {
             <Text style={{ fontSize: 32 }}>❤️❤️❤️❤️❤️</Text>
           </View>
 
-          <Image
-            source={require("../../../assets/images/sonsuModel.png")}
-            style={styles.image}
-          />
+        {animation && (
+          <View style={styles.videoContainer}>
+            <WebView
+              source={{ uri: animation }}
+              style={styles.video}
+              javaScriptEnabled={true}
+              domStorageEnabled={true}
+              allowsFullscreenVideo={true}
+              mediaPlaybackRequiresUserAction={false}
+            />
+          </View>
+        )}
+
           <Text style={{ marginTop: 30, fontSize: 30, fontWeight: 800 }}>
-            안녕하세요
+            {quizzes[currentQuestion]?.question}
           </Text>
         </View>
 
         <View style={styles.btnwrap}>
-          <TouchableOpacity style={styles.btn}>
+          <TouchableOpacity 
+            style={styles.btn}
+            onPress={() => handleAnswer(true)}
+          >
             <Text style={styles.practiceButtonText}>⭕️</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.btn}>
+          <TouchableOpacity 
+            style={styles.btn}
+            onPress={() => handleAnswer(true)}
+          >
             <Text style={styles.practiceButtonText}>❌</Text>
           </TouchableOpacity>
         </View>
@@ -162,5 +241,17 @@ const styles = StyleSheet.create({
   practiceButtonText: {
     fontSize: 70,
     textAlign: "center",
+  },
+  videoContainer: {
+    width: "80%", // 원하는 비디오 너비
+    aspectRatio: 16 / 9, // 16:9 비율로 설정
+    overflow: "hidden",
+    borderRadius: 10,
+    marginBottom: 15,
+    marginTop: 30,
+  },  
+  video: {
+    width: "100%",
+    height: "100%",
   },
 });
