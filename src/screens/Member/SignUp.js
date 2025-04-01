@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -29,34 +29,35 @@ const SignUp = () => {
     email: "",
   });
 
+  // 입력 필드 참조(ref)
+  const idRef = useRef(null);
+  const passwordRef = useRef(null);
+  const confirmPasswordRef = useRef(null);
+  const emailRef = useRef(null);
+
   const handleSignUp = async () => {
     const newErrors = {};
 
-    // 이름 유효성 검사
     if (!name) {
       newErrors.name = "이름을 입력하세요";
     } else if (name.length < 2) {
       newErrors.name = "이름은 최소 2글자 이상이어야 합니다";
     }
 
-    // 아이디 유효성 검사
     if (!id) {
       newErrors.id = "아이디를 입력하세요";
     }
 
-    // 비밀번호 유효성 검사
     if (!password) {
       newErrors.password = "비밀번호를 입력하세요";
     } else if (password.length < 6) {
       newErrors.password = "비밀번호는 최소 6자 이상이어야 합니다";
     }
 
-    // 비밀번호 확인 검사
     if (confirmPassword !== password) {
       newErrors.confirmPassword = "비밀번호가 일치하지 않습니다";
     }
 
-    // 이메일 유효성 검사
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
       newErrors.email = "이메일을 입력하세요";
@@ -83,32 +84,6 @@ const SignUp = () => {
     }
   };
 
-  const handleChangeName = (text) => {
-    setName(text);
-    if (errors.name) setErrors((prev) => ({ ...prev, name: "" }));
-  };
-
-  const handleChangeId = (text) => {
-    setId(text);
-    if (errors.id) setErrors((prev) => ({ ...prev, id: "" }));
-  };
-
-  const handleChangePassword = (text) => {
-    setPassword(text);
-    if (errors.password) setErrors((prev) => ({ ...prev, password: "" }));
-  };
-
-  const handleChangeConfirmPassword = (text) => {
-    setConfirmPassword(text);
-    if (errors.confirmPassword)
-      setErrors((prev) => ({ ...prev, confirmPassword: "" }));
-  };
-
-  const handleChangeEmail = (text) => {
-    setEmail(text);
-    if (errors.email) setErrors((prev) => ({ ...prev, email: "" }));
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.topSection}>
@@ -123,56 +98,72 @@ const SignUp = () => {
         <ScrollView contentContainerStyle={styles.SingUpInput}>
           <TextInput
             style={styles.input}
+            autoCapitalize="none"
             placeholder="이름"
             value={name}
-            onChangeText={handleChangeName}
+            onChangeText={setName}
             placeholderTextColor="#aaa"
+            returnKeyType="next"
+            onSubmitEditing={() => idRef.current?.focus()}
           />
           {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
 
           <TextInput
+            ref={idRef}
             style={styles.input}
+            autoCapitalize="none"
             placeholder="아이디"
             value={id}
-            onChangeText={handleChangeId}
+            onChangeText={setId}
             placeholderTextColor="#aaa"
+            returnKeyType="next"
+            onSubmitEditing={() => passwordRef.current?.focus()}
           />
           {errors.id && <Text style={styles.errorText}>{errors.id}</Text>}
 
           <TextInput
+            ref={passwordRef}
             style={styles.input}
+            autoCapitalize="none"
             placeholder="비밀번호"
             value={password}
-            onChangeText={handleChangePassword}
+            onChangeText={setPassword}
             secureTextEntry
             placeholderTextColor="#aaa"
+            returnKeyType="next"
+            onSubmitEditing={() => confirmPasswordRef.current?.focus()}
           />
-          {errors.password && (
-            <Text style={styles.errorText}>{errors.password}</Text>
-          )}
+          {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
 
           <TextInput
+            ref={confirmPasswordRef}
             style={styles.input}
+            autoCapitalize="none"
             placeholder="비밀번호 확인"
             value={confirmPassword}
-            onChangeText={handleChangeConfirmPassword}
+            onChangeText={setConfirmPassword}
             secureTextEntry
             placeholderTextColor="#aaa"
+            returnKeyType="next"
+            onSubmitEditing={() => emailRef.current?.focus()}
           />
-          {errors.confirmPassword && (
-            <Text style={styles.errorText}>{errors.confirmPassword}</Text>
-          )}
+          {errors.confirmPassword && <Text style={styles.errorText}>{errors.confirmPassword}</Text>}
 
           <TextInput
+            ref={emailRef}
             style={styles.input}
+            autoCapitalize="none"
             placeholder="이메일"
             value={email}
-            onChangeText={handleChangeEmail}
+            onChangeText={setEmail}
             keyboardType="email-address"
             placeholderTextColor="#aaa"
+            returnKeyType="done"
+            onSubmitEditing={handleSignUp}
           />
           {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
         </ScrollView>
+
         <TouchableOpacity style={styles.SignUpButton} onPress={handleSignUp}>
           <Text style={styles.SignUpButtonText}>회원가입</Text>
         </TouchableOpacity>
@@ -207,14 +198,14 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     flex: 1,
     paddingTop: "10%",
-    paddingBottom: 20, // 아래쪽 여백 추가
+    paddingBottom: 20,
   },
   SingUpInput: {
     flexGrow: 1,
     width: "100%",
     alignItems: "center",
     marginTop: 20,
-    paddingBottom: 20, // 아래쪽 여백 추가
+    paddingBottom: 20,
   },
   input: {
     width: "70%",
@@ -225,7 +216,7 @@ const styles = StyleSheet.create({
     marginVertical: 12,
   },
   SignUpButton: {
-    marginVertical: 20, // 상단 여백 추가
+    marginVertical: 20,
     width: "70%",
     height: 50,
     backgroundColor: "#000",

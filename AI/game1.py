@@ -14,10 +14,6 @@ actions = [
 ]  # 학습한 동작 리스트
 seq_length = 30  # 모델 학습 시 사용한 시퀀스 길이
 
-# 한글 폰트 설정
-font_path = "malgun.ttf"
-font = ImageFont.truetype(font_path, 30)
-
 # 모듈 내부 상태 변수
 _current_question = None
 _game_result = None
@@ -169,7 +165,7 @@ def generate_frames():
         _, buffer = cv2.imencode('.jpg', img)
         frame = buffer.tobytes()
         yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
     if cap is not None and cap.isOpened():
         cap.release()
