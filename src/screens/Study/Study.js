@@ -6,70 +6,17 @@ import {
   TouchableOpacity,
   Platform,
 } from "react-native";
-import React, { useEffect, useState } from "react";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SpeedBack from "../../components/SpeedBack";
 import { WebView } from "react-native-webview";
-import { API_URL, serverIP } from "../../../config";
-import axios from "axios";
+import { serverIP } from "../../../config";
+import { Video } from "expo-av";
 
 export default function Study() {
   const route = useRoute();
-  const { topic, lesson, index } = route.params;
+  const { topic, lesson } = route.params;
   const navigation = useNavigation();
-  const [animation, setAnimation] = useState(null);
-
-  // const serverIP = "http://192.168.45.144:5001";
-  // const serverIP = "http://192.168.10.20:5001";
-  // const serverIP = "http://192.0.0.2:5001";
-  // const serverIP = "http://192.168.1.123:5001";
-  const fetchTopic = async () => {
-    try {
-      const response = await axios.get(
-        `${API_URL}/lessons/${lesson.id}/topics`
-      );
-      // console.log(response.data);
-      const topicData = response.data.find((t) => t.word === topic.word);
-      if (topicData) {
-        const animationPath = topicData.animation_path;
-        console.log("서버에서 전달된 URL:", animationPath);
-        setAnimation(animationPath);
-        // setAnimation(topiceData.animation_path);
-      }
-    } catch (error) {
-      console.log("애니메이션 불러오기 실패:", error.message);
-    }
-  };
-
-  const startLesson = async () => {
-    try {
-      const response = await axios.post(
-        `${API_URL}/lessons/start`,
-        { lessonId: topic.lesson_id },
-        { withCredentials: true }
-      );
-      if (response.status === 200) {
-        console.log("강의가 시작되었습니다", response.data);
-      }
-    } catch (error) {
-      if (error.response) {
-        if (error.response.status === 401) {
-          console.log("로그인을 해주세요.");
-        } else if (error.response.status === 403) {
-          console.log("접근이 거부되었습니다. 토큰이 유효하지 않습니다.");
-        }
-      } else {
-        console.log("에러 발생:", error.message);
-      }
-    }
-  };
-
-  useEffect(() => {
-    fetchTopic();
-    startLesson();
-    // console.log("강의 정보:", lesson);
-  }, [topic]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -80,23 +27,23 @@ export default function Study() {
         onPress={() => navigation.goBack()}
       >
         <View style={styles.screenContainer}>
-          <Text style={styles.title}>{`Step ${index + 1}. ${topic.word}`}</Text>
-          {/* topic 객체라 topic => topic.word 수정 */}
+          <Text style={styles.title}>{`Step ${lesson.id}. ${topic}`}</Text>
         </View>
       </TouchableOpacity>
 
-      {animation && (
-        <WebView
-          source={{
-            uri: animation,
-          }} // 비디오 URL을 WebView에서 재생
-          style={styles.video}
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-          allowsFullscreenVideo={false}
-          mediaPlaybackRequiresUserAction={false}
-        />
-      )}
+      {/* <Image
+        source={require("../../../assets/images/sonsuModel.png")}
+        style={styles.image}
+      /> */}
+
+      <Video
+        source={require("../../../assets/videos/hi.mp4")}
+        resizeMode="contain"
+        // useNativeControls
+        isLooping
+        shouldPlay
+        style={styles.video}
+      />
 
       <View style={styles.desContainer}>
         <Text style={styles.describe}>
@@ -109,7 +56,7 @@ export default function Study() {
 
       <View style={styles.cameraFeedWrapper}>
         <WebView
-          source={{ uri: `${serverIP}/video_feed` }}
+          source={{ uri: `${serverIP}/game2/video_feed` }}
           style={styles.cameraFeed}
           javaScriptEnabled={true}
           domStorageEnabled={true}
@@ -119,7 +66,7 @@ export default function Study() {
           onError={(error) => console.log("WebView error:", error)}
           onHttpError={(syntheticEvent) => {
             const { nativeEvent } = syntheticEvent;
-            // console.log("HTTP error: ", nativeEvent);
+            console.log("HTTP error: ", nativeEvent);
           }}
         />
       </View>
@@ -127,9 +74,7 @@ export default function Study() {
       {/* 혼자 해보기 버튼 */}
       <TouchableOpacity
         style={styles.practiceButton}
-        onPress={() =>
-          navigation.navigate("StudyOnly", { topic, lesson, index })
-        }
+        onPress={() => navigation.navigate("StudyOnly", { topic, lesson })}
       >
         <Text style={styles.practiceButtonText}>혼자 해보기 →</Text>
       </TouchableOpacity>
@@ -156,9 +101,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   video: {
-    width: "100%",
-    height: undefined,
-    aspectRatio: 16 / 9,
+    width: "80%",
+    height: "23%",
     marginTop: 20,
   },
   desContainer: {
