@@ -1,6 +1,9 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import React, { useState, useEffect } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import ShortcutButton from "../ShortcutButton";
+import axios from "axios";
+import { API_URL } from "../../../config";
 
 const ProgressBar = ({ progress }) => {
   return (
@@ -23,6 +26,23 @@ const ContinueLearning = () => {
     중급: 30,
     고급: 0,
   };
+
+  const [nextLesson, setNextLesson] = useState("");
+  
+  useEffect(() => {
+    const fetchProgress = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/progress/continue`, {
+          withCredentials: true,
+        });
+        console.log(response.data.nextLesson); // 응답 데이터를 콘솔에 출력해서 확인
+        setNextLesson(response.data.nextLesson[0]); // 첫 번째 'nextLesson'만 상태에 저장
+      } catch (error) {
+        console.error("Progress 불러오기 실패:", error);
+      }
+    };
+    fetchProgress();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -49,8 +69,8 @@ const ContinueLearning = () => {
         <View style={styles.infoContainer}>
           {/* 제목 */}
           <View>
-            <Text style={styles.partTitle}>Part 1. 간단한 일상어</Text>
-            <Text style={styles.levelText}>{currentLevel} | "반갑습니다"</Text>
+            <Text style={styles.partTitle}>Part {nextLesson.lessonCategory_id}. {nextLesson.word}</Text>
+            <Text style={styles.levelText}>{currentLevel} | {nextLesson.word}</Text>
           </View>
 
           {/* 현재 레벨의 진도율만 표시 */}

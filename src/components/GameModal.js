@@ -2,7 +2,7 @@ import React from "react";
 import { Modal, View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-const GameModal = ({ visible, onClose, title, content }) => {
+const GameModal = ({ visible, onClose, title, content, onOxPress }) => {
   return (
     <Modal transparent animationType="fade" visible={visible}>
       <View style={styles.modalBackground}>
@@ -12,7 +12,7 @@ const GameModal = ({ visible, onClose, title, content }) => {
             <Icon name="window-close" size={20} color="#000" onPress={onClose} />
           </View>
           <Text style={styles.modalContent}>{content}</Text>
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+          <TouchableOpacity onPress={onOxPress} style={styles.closeButton}>
             <Text style={styles.closeText}>결과 확인하기</Text>
           </TouchableOpacity>
         </View>
