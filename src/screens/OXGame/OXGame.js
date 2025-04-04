@@ -6,17 +6,28 @@ import SpeedBack from "../../components/SpeedBack";
 import { useNavigation } from "@react-navigation/native";
 import { WebView } from "react-native-webview";
 import { API_URL } from "../../../config";
+import { useFonts } from "expo-font";
+import { customFonts } from "../../../src/constants/fonts";
 import axios from "axios";
+import GameModal from "../../components/GameModal";
 
 export default function OXGame () {
   const [quizzes, setQuizzes] = useState([]);
   const [sessionId, setSessionId] = useState(null);
   const [userAnswers, setUserAnswers] = useState([]);
   const [animation, setAnimation] = useState(null);
+  const [fontsLoaded] = useFonts(customFonts);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [quizResult, setQuizResult] = useState({ score: 0, total: 0 });
+  
   const navigation = useNavigation();
+
+  if (!fontsLoaded) {
+    return <View><Text>Loading...</Text></View>;
+  }
 
   useEffect(() => {
     const fetchQuizzes = async () => {
@@ -70,7 +81,7 @@ export default function OXGame () {
       console.log(res.data);
       if (res.status === 200) {
         Alert.alert("채점 결과", `점수: ${res.data.score} / ${res.data.total}`);
-        navigation.navigate("Review");
+        navigation.navigate("Main");
       }
     } catch (err) {
       console.error("퀴즈 제출 실패:", err);
@@ -143,6 +154,13 @@ export default function OXGame () {
           </TouchableOpacity>
         </View>
       </View>
+
+      <GameModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        title={`${quizResult.total}문제 중에 ${quizResult.score}문제 맞췄습니다!`}
+        content={<Image source={require("../../../assets/images/sonsuModel.png")} style={styles.Image} />}
+      />
     </View>
   );
 }
@@ -253,5 +271,9 @@ const styles = StyleSheet.create({
   video: {
     width: "100%",
     height: "100%",
+  },
+  Image: {
+    width: 95,
+    height: 160,
   },
 });

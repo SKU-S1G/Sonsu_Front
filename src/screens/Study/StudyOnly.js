@@ -12,6 +12,8 @@ export default function StudyOnly() {
   const { topic, lesson, index } = route.params;
   const navigation = useNavigation();
 
+  console.log("topic", topic);
+
   const completeLesson = async () => {
     try {
       const response = await axios.put(
@@ -26,7 +28,7 @@ export default function StudyOnly() {
     } catch (error) {
       console.log("완료 요청 중 에러 발생:", error.message);
     }
-  };
+  }; 
 
   return (
     <SafeAreaView style={styles.container}>
@@ -39,22 +41,22 @@ export default function StudyOnly() {
             source={require("../../../assets/images/SonsuLogo.png")}
             style={{ width: 30, height: 30 }}
           />
-          <View style={styles.screenContainer}>
+          <View>
             <Text
               style={styles.title}
-            >{`Step ${index + 1}. ${topic.word}`}</Text>
+            >{`Step ${topic.lessonCategory_id}. ${topic.word}`}</Text>
           </View>
         </View>
       </TouchableOpacity>
 
       <View style={styles.desContainer}>
-        <Text style={{ fontSize: 23, fontWeight: "bold" }}>혼자해보기</Text>
+        <Text style={{ fontSize: 23, fontWeight: "semibold" }}>혼자해보기</Text>
       </View>
 
       {/* 카메라 비디오 스트리밍 WebView */}
       <View style={styles.cameraFeedWrapper}>
         <WebView
-          source={{ uri: `${serverIP}/video_feed` }}
+          source={{ uri: `${serverIP}/game2/video_feed` }}
           style={styles.cameraFeed}
           javaScriptEnabled={true}
           domStorageEnabled={true}
@@ -69,22 +71,27 @@ export default function StudyOnly() {
           }}
         />
       </View>
+      
+      <View style={{alignItems: "center", marginTop: 20}}>
+        <View style={{ marginTop: 10 }}>
+          <Text style={{ fontSize: 15 }}>혼자서 학습해보세요!</Text>
+        </View>
 
-      <View style={{ marginTop: 30 }}>
-        <Text style={{ fontSize: 15 }}>혼자서 학습해보세요!</Text>
+        <View style={{ marginTop: 20 }}>
+          <Text style={{ fontSize: 25, fontWeight: "bold" }}>'안녕하세요'</Text>
+        </View>
+
+        <TouchableOpacity
+          onPress={() => {
+            completeLesson();
+            navigation.pop(2);
+          }}
+          style={{ marginTop: 20 }}
+        >
+          <Text style={{ fontSize: 25, color: "red" }}>정확도 80%</Text>
+        </TouchableOpacity>
       </View>
 
-      <View style={{ marginTop: 40 }}>
-        <Text style={{ fontSize: 25, fontWeight: "bold" }}>'안녕하세요'</Text>
-      </View>
-      <TouchableOpacity
-        onPress={() => {
-          completeLesson();
-          navigation.pop(2);
-        }}
-      >
-        <Text style={{ fontSize: 25, color: "red" }}>정확도 80%</Text>
-      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -92,40 +99,43 @@ export default function StudyOnly() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
-    alignItems: "center",
+    backgroundColor: "#FBE7A6",
   },
   screenContainer: {
-    flex: 1,
-    flexDirection: "row",
-    alignSelf: "center",
-    marginLeft: 10,
+    flexDirection: "row", 
+    marginLeft: 30,
+    marginTop: 20,
   },
   title: {
+    alignSelf: "flex-start",
     fontSize: 22,
-    marginLeft: 10,
+    fontWeight: "bold",
+    marginLeft: 5,
+    marginTop: 5,
   },
   desContainer: {
-    marginTop: 30,
+    alignItems: "flex-start",
+    marginLeft: 30,
+    marginTop: 20,
+    marginBottom: 15,
     width: 350,
   },
   backButton: {
     padding: 10,
-    flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "center",
   },
   cameraFeedWrapper: {
-    alignSelf: "center",
-    width: "100%",
-    height: 450,
-    borderRadius: 12,
-    overflow: "hidden",
-    marginTop: 50,
-    aspectRatio: 12 / 16,
+    flex: 1,
+    marginTop: 20,
+    alignItems: "center",
   },
   cameraFeed: {
-    flex: 1,
     backgroundColor: "transparent",
+    width: '100%',
+    height: 400,
+    borderRadius: 15,
+    overflow: "hidden",
+    aspectRatio: 3 / 4,
   },
 });

@@ -19,7 +19,25 @@ import { io } from "socket.io-client";
 export default function Classroom() {
   const [selectedLevel, setSelectedLevel] = useState("초급");
   const [progress, setProgress] = useState([]);
+  const [topics, setTopics] = useState([]);
+  const [nextLesson, setNextLesson] = useState("");
+
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const fetchProgress = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/progress/continue`, {
+          withCredentials: true,
+        });
+        console.log(response.data.nextLesson); // 응답 데이터를 콘솔에 출력해서 확인
+        setNextLesson(response.data.nextLesson[0]); // 첫 번째 'nextLesson'만 상태에 저장
+      } catch (error) {
+        console.error("Progress 불러오기 실패:", error);
+      }
+    };
+    fetchProgress();
+  }, []);
 
   useEffect(() => {
     const socketInstance = io(`${API_URL}`, {
@@ -32,7 +50,7 @@ export default function Classroom() {
       const fetchCompletedCategories = async () => {
         try {
           const response = await axios.post(
-            `${API_URL}/lessons/progress/categories`,
+            `${API_URL}/progress/topics`,
             {},
             { withCredentials: true }
           );
@@ -173,6 +191,9 @@ export default function Classroom() {
                       : "#fff", // 기본값 (혹은 기본 색상을 원하면 변경)
             },
           ]}
+          onPress={() =>
+            navigation.navigate("Study", { topic: nextLesson, lesson: nextLesson })
+          }
         >
           <View style={styles.card_}>
             <View style={styles.imageContainer_}>
@@ -186,7 +207,7 @@ export default function Classroom() {
               numberOfLines={1} // 이 설정은 텍스트가 한 줄로 표시되도록 합니다.
               ellipsizeMode="tail" // 텍스트가 길어지면 끝부분을 잘라서 '...'로 표시합니다.
             >
-              Part
+              Part {nextLesson.lessonCategory_id}. {nextLesson.word}
             </Text>
             <Text style={styles.sub}>자음, 모음, 숫자, 단위</Text>
           </View>

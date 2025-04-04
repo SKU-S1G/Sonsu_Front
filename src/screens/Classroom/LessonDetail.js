@@ -42,7 +42,7 @@ export default function LessonDetail() {
       const fetchUserProgress = async () => {
         try {
           const response = await axios.post(
-            `${API_URL}/lessons/progress/topics`,
+            `${API_URL}/progress/topics`,
             {
               withCredentials: true,
             }
@@ -191,46 +191,7 @@ export default function LessonDetail() {
           / {topics.length} 강의
         </Text>
       </View>
-      <View style={styles.NowContainer}>
-        <TouchableOpacity
-          style={[
-            styles.contentContainer_,
-            {
-              backgroundColor:
-                selectedLevel === "초급"
-                  ? "#C7DACD"
-                  : selectedLevel === "중급"
-                    ? "#CBD3DF"
-                    : selectedLevel === "고급"
-                      ? "#E9D0CC"
-                      : "#fff", // 기본값 (혹은 기본 색상을 원하면 변경)
-            },
-          ]}
-        >
-          <View style={styles.card_}>
-            <View style={styles.imageContainer_}>
-              <Image style={styles.image_} />
-            </View>
-          </View>
-
-          <View style={styles.textContainer}>
-            <Text
-              style={styles.title}
-              numberOfLines={1} // 이 설정은 텍스트가 한 줄로 표시되도록 합니다.
-              ellipsizeMode="tail" // 텍스트가 길어지면 끝부분을 잘라서 '...'로 표시합니다.
-            >
-              Part
-            </Text>
-            <Text style={styles.sub}>자음, 모음, 숫자, 단위</Text>
-          </View>
-          <Feather
-            name="check-circle"
-            size={27}
-            color="black"
-            style={styles.check}
-          />
-        </TouchableOpacity>
-      </View>
+    
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {topics.map((topic, index) => (
           <TouchableOpacity

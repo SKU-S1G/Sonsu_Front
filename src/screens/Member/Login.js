@@ -34,7 +34,7 @@ const Login = () => {
       .then((response) => {
         if (response.status === 200) {
           console.log(response.data);
-          navigation.navigate("AppPermissions");
+          navigation.navigate("Main");
         }
       })
       .catch((error) => {
