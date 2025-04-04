@@ -294,7 +294,6 @@ export default function Classroom() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: '#FFE694',
     marginBottom: 12,
   },
   Title: {

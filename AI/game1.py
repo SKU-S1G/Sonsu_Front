@@ -64,6 +64,8 @@ def generate_frames():
     # 카메라가 이미 열려있는지 확인
     if cap is None or not cap.isOpened():
         cap = cv2.VideoCapture(0)
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 768)  # 가로 크기 설정
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1024)  # 세로 크기 설정
     
     seq = []
     is_recognizing = True
@@ -120,8 +122,8 @@ def generate_frames():
                 seq.pop(0)
 
             # 예측 수행 (충분한 시간이 지났고, 시퀀스가 충분하고, 마지막 예측으로부터 충분히 시간이 지났을 때)
-            if (ready_to_predict and 
-                len(seq) == seq_length and 
+            if (ready_to_predict and
+                len(seq) == seq_length and
                 current_time - last_prediction_time >= prediction_cooldown):
                 
                 input_data = np.expand_dims(np.array(seq), axis=0).astype(np.float32)
