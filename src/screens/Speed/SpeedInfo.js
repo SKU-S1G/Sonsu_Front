@@ -1,11 +1,11 @@
-import React from 'react';
-import { View, StyleSheet, Text, Image, TouchableOpacity } from 'react-native';
-import { useFonts } from 'expo-font';
+import React from "react";
+import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
+import { useFonts } from "expo-font";
 import { customFonts } from "../../../src/constants/fonts";
-import { LinearGradient } from 'expo-linear-gradient';
-import MaskedView from '@react-native-masked-view/masked-view';
-import Header from '../../components/Header';
-import SpeedBack from '../../components/SpeedBack';
+import { LinearGradient } from "expo-linear-gradient";
+import MaskedView from "@react-native-masked-view/masked-view";
+import Header from "../../components/Header";
+import SpeedBack from "../../components/SpeedBack";
 import { useNavigation } from "@react-navigation/native";
 
 export default function SpeedInfo() {
@@ -13,13 +13,17 @@ export default function SpeedInfo() {
   const navigation = useNavigation();
 
   if (!fontsLoaded) {
-    return <View><Text>Loading...</Text></View>;
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    );
   }
 
   return (
     <View>
       <Header color="#FFFFFF" />
-      <SpeedBack heightMultiplier={1.4} />
+      <SpeedBack heightMultiplier={1.8} />
 
       <View>
         <View style={styles.speedTextContainer}>
@@ -32,8 +36,8 @@ export default function SpeedInfo() {
             }
           >
             <LinearGradient
-              colors={['#F26851', '#FFC0B6']}
-              start={{ x: 0, y: 0.8 }} 
+              colors={["#F26851", "#FFC0B6"]}
+              start={{ x: 0, y: 0.8 }}
               end={{ x: 1, y: 0 }}
               style={styles.gradient}
             />
@@ -43,26 +47,18 @@ export default function SpeedInfo() {
         <View style={styles.info}>
           <Image
             source={require("../../../assets/images/sonsuModel.png")}
-            style={styles.image} 
+            style={styles.image}
           />
-          <View style={styles.infoText} >
-            <Text style={{ fontSize: 16 }}>
-              스피드 퀴즈를 위해
-            </Text>
-            <Text style={{ fontSize: 16 }}>
-              카메라를 준비해 주세요 📷
-            </Text>
+          <View style={styles.infoText}>
+            <Text style={{ fontSize: 16 }}>스피드 퀴즈를 위해</Text>
+            <Text style={{ fontSize: 16 }}>카메라를 준비해 주세요 📷</Text>
           </View>
         </View>
-        
-        <View style={styles.importantView}>
-          <Text style={styles.importantTitle}>
-            ❗️주의사항❗️
-          </Text>
 
-          <Text style={styles.importantText}>
-            ☝🏻 정확도가 80% 이상일 때 
-          </Text>
+        <View style={styles.importantView}>
+          <Text style={styles.importantTitle}>❗️주의사항❗️</Text>
+
+          <Text style={styles.importantText}>☝🏻 정확도가 80% 이상일 때</Text>
           <Text style={styles.importantText2}>
             자동으로 다음 단어로 넘어가요
           </Text>
@@ -70,9 +66,7 @@ export default function SpeedInfo() {
           <Text style={styles.importantText}>
             ✌🏻 배경이 너무 밝거나 어두우면
           </Text>
-          <Text style={styles.importantText2}>
-            인식이 잘 안 될 수 있어요
-          </Text>
+          <Text style={styles.importantText2}>인식이 잘 안 될 수 있어요</Text>
         </View>
 
         <TouchableOpacity
@@ -95,23 +89,23 @@ const styles = StyleSheet.create({
     height: 40,
   },
   gradient: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   speedText: {
     fontSize: 40,
-    fontFamily: 'RixInooAriDuriRegular',
-    color: 'white',
+    fontFamily: "RixInooAriDuriRegular",
+    color: "white",
     marginLeft: 30,
   },
   info: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop:50,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 50,
   },
   image: {
-    width: '30%',
+    width: "30%",
     height: 170,
     resizeMode: "contain",
   },
@@ -119,13 +113,13 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   importantView: {
-    backgroundColor: '#FFFFFF',
-    width: '70%',
-    height: 'fit-content',
+    backgroundColor: "#FFFFFF",
+    width: "70%",
+    height: "fit-content",
     paddingVertical: 30,
     paddingHorizontal: 25,
     borderRadius: 20,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginTop: 50,
     shadowColor: "#000",
     shadowOpacity: 0.25,
@@ -134,25 +128,25 @@ const styles = StyleSheet.create({
   },
   importantTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
   },
   importantText: {
     fontSize: 15,
-    width: '90%',
-    alignSelf: 'center',
+    width: "90%",
+    alignSelf: "center",
     marginTop: 20,
   },
   importantText2: {
     fontSize: 15,
-    width: '90%',
-    alignSelf: 'center',
+    width: "90%",
+    alignSelf: "center",
     marginLeft: 50,
   },
   practiceButton: {
-    width: '60%',
+    width: "60%",
     marginTop: 50,
-    alignSelf: 'center',
+    alignSelf: "center",
     backgroundColor: "#FFE694",
     paddingVertical: 12,
     paddingHorizontal: 30,
