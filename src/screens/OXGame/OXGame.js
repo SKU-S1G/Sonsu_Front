@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text, TouchableOpacity, Image, Alert } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import MaskedView from "@react-native-masked-view/masked-view";
 import SpeedBack from "../../components/SpeedBack";
@@ -19,9 +19,10 @@ export default function OXGame() {
   const [fontsLoaded] = useFonts(customFonts);
   const [modalVisible, setModalVisible] = useState(false);
   const [hearts, setHearts] = useState(5); // 하트 상태 추가
+
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [quizResult, setQuizResult] = useState({ score: 0, total: 0 }); // 실시간 업데이트될 score, total
+  const [quizResult, setQuizResult] = useState({ score: 0, total: 0 });
 
   const navigation = useNavigation();
 
@@ -47,29 +48,19 @@ export default function OXGame() {
 
   const handleAnswer = (answer) => {
     const updatedAnswers = [...userAnswers];
+    const currentQuiz = quizzes[currentQuestion];
+    const isCorrect = currentQuiz.check_answer === answer;
+
+    if (!isCorrect) {
+      setHearts((prev) => Math.max(prev - 1, 0));
+    } else {
+    }
+
     updatedAnswers[currentQuestion] = {
       quiz_id: quizzes[currentQuestion].quiz_id,
       answer: answer,
     };
     setUserAnswers(updatedAnswers);
-
-    // 정답 확인 후 하트 감소
-    if (answer !== quizzes[currentQuestion].correct_answer) {
-      setHearts((prevHearts) => prevHearts - 1); // 틀리면 하트 1개 감소
-    }
-
-    // 실시간으로 점수 계산
-    if (answer === quizzes[currentQuestion].correct_answer) {
-      setQuizResult((prevState) => ({
-        score: prevState.score + 1,  // 맞히면 score 증가
-        total: prevState.total + 1,  // 문제 수 증가
-      }));
-    } else {
-      setQuizResult((prevState) => ({
-        score: prevState.score,
-        total: prevState.total + 1,  // 틀려도 문제 수는 증가
-      }));
-    }
 
     // 다음 문제로 이동 (마지막 문제라면 이동 없이 대기)
     if (currentQuestion < quizzes.length - 1) {
@@ -96,7 +87,7 @@ export default function OXGame() {
         sessionId: sessionId,
         answers: userAnswers,
       });
-      console.log("res", res.data);
+      console.log("res", res);
       if (res.status === 200) {
         setQuizResult({
           score: res.data.score,
@@ -115,7 +106,7 @@ export default function OXGame() {
   console.log("quizResult", quizResult);
 
   useEffect(() => {
-    console.log("userAnswer", userAnswers);
+    console.log("userAnswer",userAnswers);
   }, [userAnswers]);
 
   return (

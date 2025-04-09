@@ -60,17 +60,20 @@ def draw_text(img, text, position, font, color=(0, 255, 0)):
 def generate_frames():
     """카메라 프레임을 스트리밍하는 함수"""
     global cap, seq, is_recognizing, _current_question, _game_result, _question_time
-    
+
     # 카메라가 이미 열려있는지 확인
     if cap is None or not cap.isOpened():
         cap = cv2.VideoCapture(0)
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 768)  # 가로 크기 설정
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1024)  # 세로 크기 설정
-    
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)  # 원본 프레임 가로 설정
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)  # 원본 프레임 세로 설정
+
     seq = []
     is_recognizing = True
     last_prediction_time = 0
     prediction_cooldown = 1.0  # 예측 간 최소 시간 간격(초)
+
+    TARGET_WIDTH = 480     # 출력용 가로 크기
+    TARGET_HEIGHT = 640   # 출력용 세로 크기
 
     while is_recognizing:
         ret, img = cap.read()
@@ -78,6 +81,8 @@ def generate_frames():
             break
 
         img = cv2.flip(img, 1)
+
+        # 분석은 원본 사이즈 기준으로 수행
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         result = holistic.process(img_rgb)
 
@@ -107,12 +112,12 @@ def generate_frames():
         current_time = time.time()
         elapsed_since_question = current_time - _question_time
         ready_to_predict = elapsed_since_question >= _warm_up_time
-        
-        # 준비 상태 텍스트 표시
+
+        # 준비 상태 텍스트 표시 (※ 나중에 리사이즈되므로 좌표 주의)
         if not ready_to_predict and _current_question:
             countdown = max(0, int(_warm_up_time - elapsed_since_question))
             img = draw_text(img, f"준비하세요... {countdown}초", (10, 50), font, (0, 0, 255))
-        
+
         if joint_list:
             joint_list = np.array(joint_list).flatten()
             seq.append(joint_list)
@@ -121,11 +126,10 @@ def generate_frames():
             if len(seq) > seq_length:
                 seq.pop(0)
 
-            # 예측 수행 (충분한 시간이 지났고, 시퀀스가 충분하고, 마지막 예측으로부터 충분히 시간이 지났을 때)
             if (ready_to_predict and
                 len(seq) == seq_length and
                 current_time - last_prediction_time >= prediction_cooldown):
-                
+
                 input_data = np.expand_dims(np.array(seq), axis=0).astype(np.float32)
 
                 interpreter.set_tensor(input_details[0]['index'], input_data)
@@ -134,15 +138,9 @@ def generate_frames():
 
                 predicted_action = actions[np.argmax(prediction)]
                 confidence = np.max(prediction)
-                
-                # 디버깅용 예측 결과 표시
-                # img = draw_text(img, f'예측: {predicted_action} ({confidence:.2f})', (10, 400), font, (255, 255, 255))
 
-                # 충분한 신뢰도를 가진 경우에만 정답 판별
                 if confidence >= _min_confidence:
                     color = (0, 255, 0)
-
-                    # 정답 여부 판별
                     if _current_question:
                         if predicted_action == _current_question:
                             _game_result = "정답입니다!"
@@ -152,10 +150,9 @@ def generate_frames():
                             color = (255, 0, 0)
                     else:
                         _game_result = "문제가 출제되지 않았습니다."
-                    
-                    last_prediction_time = current_time  # 예측 시간 업데이트
+                    last_prediction_time = current_time
 
-        # 랜드마크 그리기
+        # 랜드마크 그리기 (※ 이 역시 원본에 표시)
         if result.left_hand_landmarks:
             mp_drawing.draw_landmarks(img, result.left_hand_landmarks, mp_holistic.HAND_CONNECTIONS)
         if result.right_hand_landmarks:
@@ -163,11 +160,14 @@ def generate_frames():
         if result.pose_landmarks:
             mp_drawing.draw_landmarks(img, result.pose_landmarks, mp_holistic.POSE_CONNECTIONS)
 
+        # 화면 출력만 크게 리사이즈
+        img = cv2.resize(img, (TARGET_WIDTH, TARGET_HEIGHT))
+
         # 프레임을 웹에 전달
         _, buffer = cv2.imencode('.jpg', img)
         frame = buffer.tobytes()
         yield (b'--frame\r\n'
-                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
     if cap is not None and cap.isOpened():
         cap.release()

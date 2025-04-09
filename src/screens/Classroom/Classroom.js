@@ -30,8 +30,8 @@ export default function Classroom() {
         const response = await axios.get(`${API_URL}/progress/continue`, {
           withCredentials: true,
         });
-        console.log(response.data.nextLesson); // 응답 데이터를 콘솔에 출력해서 확인
-        setNextLesson(response.data.nextLesson[0]); // 첫 번째 'nextLesson'만 상태에 저장
+        console.log(response.data.nextLesson);
+        setNextLesson(response.data.nextLesson[0]);
       } catch (error) {
         console.error("Progress 불러오기 실패:", error);
       }
@@ -50,7 +50,7 @@ export default function Classroom() {
       const fetchCompletedCategories = async () => {
         try {
           const response = await axios.post(
-            `${API_URL}/progress/topics`,
+            `${API_URL}/progress/categories`,
             {},
             { withCredentials: true }
           );
