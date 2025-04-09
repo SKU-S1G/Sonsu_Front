@@ -45,15 +45,22 @@ export default function OXInfo() {
         </View>
 
         <View style={styles.info}>
-          <View style={styles.infoText}>
-            <Text style={{ fontSize: 16 }}>캐릭터의 수어를 보고</Text>
-            <Text style={{ fontSize: 16 }}>정답을 맞춰보세요!!</Text>
-          </View>
-
           <Image
             source={require("../../../assets/images/sonsuModel.png")}
             style={styles.image}
           />
+          <View style={styles.infoText}>
+            <Text style={{ fontSize: 16 }}>캐릭터의 수어를 보고</Text>
+            <Text style={{ fontSize: 16 }}>정답을 맞춰보세요!!</Text>
+          </View>
+        </View>
+
+        <View style={styles.importantView}>
+          <Text style={styles.importantTitle}>🎯게임 방법🎮</Text>
+          <Text style={styles.importantText}>✅ 해당 수어가 정답이라면 O,</Text>
+          <Text style={styles.importantText2}>오답이라면 X를 누르세요</Text>
+          <Text style={styles.importantText}>✅ 해당 수어가 정답이라면 O,</Text>
+          <Text style={styles.importantText2}>오답이라면 X를 누르세요</Text>
         </View>
 
         <TouchableOpacity
@@ -86,15 +93,17 @@ const styles = StyleSheet.create({
     marginLeft: 30,
   },
   info: {
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     marginTop: 50,
   },
   image: {
-    width: "50%",
-    height: 240,
+    width: "30%",
+    height: 170,
     resizeMode: "contain",
-    marginTop: 50,
+    // marginTop: 50,
+    marginRight: 30,
   },
   infoText: {
     marginBottom: 20,
@@ -132,7 +141,7 @@ const styles = StyleSheet.create({
   },
   practiceButton: {
     width: "60%",
-    marginTop: 150,
+    marginTop: 50,
     alignSelf: "center",
     backgroundColor: "#FFE694",
     paddingVertical: 12,

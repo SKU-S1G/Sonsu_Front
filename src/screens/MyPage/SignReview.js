@@ -66,7 +66,7 @@ const SignReview = () => {
       <BackGround />
       <View>
         <Text style={{ fontSize: 30, textAlign: "center", marginBottom: 5 }}>
-          저장한 수어
+          수어 즐겨찾기
         </Text>
         <Text
           style={{

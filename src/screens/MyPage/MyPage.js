@@ -93,7 +93,7 @@ const MyPage = () => {
           style={styles.tabContent}
           onPress={() => navigation.navigate("SignReview")}
         >
-          <Text style={{ fontSize: 12 }}>저장한 수어</Text>
+          <Text style={{ fontSize: 12 }}>즐겨찾기</Text>
           <FontAwesome5
             name="bookmark"
             size={24}
