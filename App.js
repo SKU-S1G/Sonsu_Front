@@ -29,8 +29,8 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Main" component={Menu} />
+          <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="AppPermissions" component={AppPermissions} />
           <Stack.Screen name="SignUp" component={SignUp} />
           <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
