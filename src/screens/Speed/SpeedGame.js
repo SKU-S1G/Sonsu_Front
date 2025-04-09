@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, Image, TouchableOpacity } from 'react-native';
 import { useFonts } from 'expo-font';
 import { customFonts } from "../../../src/constants/fonts";
@@ -14,6 +14,34 @@ import GameModal from '../../components/GameModal';
 export default function SpeedGame() {
   const [fontsLoaded] = useFonts(customFonts);
   const [modalVisible, setModalVisible] = useState(false);
+  const [question, setQuestion] = useState('');
+  const [result, setResult] = useState('');
+
+  if (!fontsLoaded) {
+    return <View><Text>Loading...</Text></View>;
+  }
+
+  useEffect(() => {
+    fetch(`${serverIP}/game2/get_question`)
+      .then(response => response.json())
+      .then(data => {
+        setQuestion(data.question);
+      })
+      .catch(error => {
+        console.log("Error fetching question:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    fetch(`${serverIP}/game2/get_game_info`)
+      .then(response => response.json())
+      .then(data => {
+        setResult(data.question);  // 받아온 문제를 상태에 저장
+      })
+      .catch(error => {
+        console.log("Error fetching question:", error);
+      });
+  }, []);
 
   if (!fontsLoaded) {
     return <View><Text>Loading...</Text></View>;
@@ -46,7 +74,7 @@ export default function SpeedGame() {
 
       <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.signView}>
         <Text style={styles.signText1}>단어</Text>
-        <Text style={styles.signText2}>안녕하세요</Text>
+        <Text style={styles.signText2}>{question}</Text>
       </TouchableOpacity>
 
       <View style={styles.showContainer}>
@@ -56,7 +84,7 @@ export default function SpeedGame() {
         </View>
 
         <View style={styles.indexView}>
-          <Text style={styles.indexText1}>4</Text>
+          <Text style={styles.indexText1}>{result}</Text>
           <Text style={styles.indexText2}>/5</Text>
         </View>
       </View>
@@ -68,7 +96,7 @@ export default function SpeedGame() {
       {/* 카메라 비디오 스트리밍 WebView */}
       <View style={styles.cameraFeedWrapper}>
         <WebView
-          source={{ uri: `${serverIP}/video_feed` }}
+          source={{ uri: `${serverIP}/game2/video_feed` }}
           style={styles.cameraFeed}
           javaScriptEnabled={true}
           domStorageEnabled={true}
