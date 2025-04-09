@@ -1,3 +1,3 @@
-export const API_URL = "http://172.16.106.224:5003";
+export const API_URL = "http://172.30.1.34:5003";
 
-export const serverIP = "http://172.16.106.224:5001";
+export const serverIP = "http://172.30.1.34:5001";
