@@ -69,8 +69,8 @@ const ContinueLearning = () => {
         <View style={styles.infoContainer}>
           {/* 제목 */}
           <View>
-            <Text style={styles.partTitle}>Part {nextLesson.lessonCategory_id}. {nextLesson.word}</Text>
-            <Text style={styles.levelText}>{currentLevel} | {nextLesson.word}</Text>
+            <Text style={styles.partTitle}> {nextLesson.lessonCategory_id}. {nextLesson.word}</Text>
+            <Text style={styles.levelText}>{currentLevel}</Text>
           </View>
 
           {/* 현재 레벨의 진도율만 표시 */}

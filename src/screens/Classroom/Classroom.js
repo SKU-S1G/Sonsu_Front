@@ -197,7 +197,7 @@ export default function Classroom() {
         >
           <View style={styles.card_}>
             <View style={styles.imageContainer_}>
-              <Image style={styles.image_} />
+            <Image source={require("../../../assets/images/Sign.png")} style={styles.image_} />
             </View>
           </View>
 
@@ -207,13 +207,13 @@ export default function Classroom() {
               numberOfLines={1} // 이 설정은 텍스트가 한 줄로 표시되도록 합니다.
               ellipsizeMode="tail" // 텍스트가 길어지면 끝부분을 잘라서 '...'로 표시합니다.
             >
-              Part {nextLesson.lessonCategory_id}. {nextLesson.word}
+              Step {nextLesson.lessonCategory_id}. {nextLesson.word}
             </Text>
-            <Text style={styles.sub}>자음, 모음, 숫자, 단위</Text>
+            <Text style={styles.sub}>이어서 학습하러 가기</Text>
           </View>
           <Feather
             name="check-circle"
-            size={27}
+            size={25}
             color="black"
             style={styles.check}
           />
@@ -260,7 +260,7 @@ export default function Classroom() {
                   </View>
                 )}
                 <View style={styles.imageContainer}>
-                  <Image source={lesson.animationPath} style={styles.image} />
+                  <Image source={lesson.categoryImage} style={styles.image} />
                 </View>
               </View>
               <View style={styles.textContainer}>
@@ -275,7 +275,7 @@ export default function Classroom() {
               </View>
               <Feather
                 name="check-circle"
-                size={27}
+                size={25}
                 color={
                   lesson.partNumber > currentProgress
                     ? "gray"
