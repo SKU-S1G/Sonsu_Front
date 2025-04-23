@@ -288,8 +288,8 @@ export default function Classroom() {
                 >
                   Part {lesson.partNumber}. {lesson.title}
                 </Text>
-                
-                <Text style={styles.sub}>
+
+                <Text style={styles.sub} numberOfLines={1} ellipsizeMode="tail">
                   {Array.isArray(lesson.word) ? lesson.word.join(", ") : lesson.word}
                 </Text>
 
