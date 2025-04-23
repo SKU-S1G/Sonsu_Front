@@ -80,38 +80,52 @@ export default function Classroom() {
 
   const renderCategoryButtons = () => (
     <View style={styles.categoryContainer}>
-      {["초급", "중급", "고급"].map((level) => (
-        <TouchableOpacity
-          key={level}
-          style={[
-            styles.categoryButton,
-            selectedLevel === level && styles.selectedCategory,
-          ]}
-          onPress={() => {
-            setSelectedLevel(level);
-            fetchCategories(level);
-          }}
-        >
-          <View style={styles.textWrapper}>
-            <Text
-              style={[
-                styles.categoryText,
-                selectedLevel === level && styles.selectedCategoryText,
-              ]}
-            >
-              {level}
-            </Text>
-            {selectedLevel === level && (
-              <View
+      {["초급", "중급", "고급"].map((level, index) => {
+        // index: 0 = 초급, 1 = 중급, 2 = 고급
+        // currentProgress가 5라면, 초급(1단계)은 완료된 상태
+        // 중급은 currentProgress >= 6 이상일 때 열리게 설정
+        const levelOrder = index + 1;
+        const isLocked = currentProgress < (levelOrder - 1) * 5; // 예시 기준 (레벨당 5개 있다고 가정)
+  
+        return (
+          <TouchableOpacity
+            key={level}
+            style={[
+              styles.categoryButton,
+              selectedLevel === level && styles.selectedCategory,
+              isLocked && { opacity: 0.4 }, // 잠겨있을 경우 흐리게 표시
+            ]}
+            onPress={() => {
+              if (!isLocked) {
+                setSelectedLevel(level);
+                fetchCategories(level);
+              } else {
+                alert("이 레벨은 아직 잠겨있습니다.");
+              }
+            }}
+            disabled={isLocked}
+          >
+            <View style={styles.textWrapper}>
+              <Text
                 style={[
-                  styles.indicator,
-                  { backgroundColor: levelColors[level] },
+                  styles.categoryText,
+                  selectedLevel === level && styles.selectedCategoryText,
                 ]}
-              />
-            )}
-          </View>
-        </TouchableOpacity>
-      ))}
+              >
+                {level}
+              </Text>
+              {selectedLevel === level && (
+                <View
+                  style={[
+                    styles.indicator,
+                    { backgroundColor: levelColors[level] },
+                  ]}
+                />
+              )}
+            </View>
+          </TouchableOpacity>
+        );
+      })}
       <TouchableOpacity
         style={styles.reviewButton}
         onPress={() => navigation.navigate("Review")}
@@ -120,6 +134,7 @@ export default function Classroom() {
       </TouchableOpacity>
     </View>
   );
+  
 
   const [lessons, setLessons] = useState([]);
   const levels = { 초급: 1, 중급: 2, 고급: 3 };
@@ -133,13 +148,15 @@ export default function Classroom() {
         `${API_URL}/lessons/${levelId}/categories`,
         { withCredentials: true }
       );
-      const totalCategories = response.data.map((lesson) => ({
+      const totalCategories = response.data.categoriesWithWord.map((lesson) => ({
         id: lesson.lessonCategory_id,
         partNumber: lesson.part_number,
         title: lesson.category,
+        word: lesson.words,
         categoryImage: require("../../../assets/images/Sign.png"),
       }));
       setLessons(totalCategories);
+      console.log("카테고리 데이터:", totalCategories);
     } catch (error) {
       console.log(error.message);
       Alert.alert("오류", "강의 데이터를 불러오는 데 실패했습니다.");
@@ -207,7 +224,7 @@ export default function Classroom() {
               numberOfLines={1} // 이 설정은 텍스트가 한 줄로 표시되도록 합니다.
               ellipsizeMode="tail" // 텍스트가 길어지면 끝부분을 잘라서 '...'로 표시합니다.
             >
-              Step {nextLesson.lessonCategory_id}. {nextLesson.word}
+              Part {nextLesson.lessonCategory_id}. {nextLesson.word}
             </Text>
             <Text style={styles.sub}>이어서 학습하러 가기</Text>
           </View>
@@ -271,7 +288,11 @@ export default function Classroom() {
                 >
                   Part {lesson.partNumber}. {lesson.title}
                 </Text>
-                <Text style={styles.sub}>자음, 모음, 숫자, 단위</Text>
+                
+                <Text style={styles.sub}>
+                  {Array.isArray(lesson.word) ? lesson.word.join(", ") : lesson.word}
+                </Text>
+
               </View>
               <Feather
                 name="check-circle"

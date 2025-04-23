@@ -7,46 +7,51 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import Header from '../../components/Header';
 import BackGround from '../../components/BackGround';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { WebView } from "react-native-webview"; // WebView import 추가
+import { WebView } from "react-native-webview";
 import { serverIP } from "../../../config";
 import GameModal from '../../components/GameModal';
+import axios from 'axios';
 
 export default function SpeedGame() {
   const [fontsLoaded] = useFonts(customFonts);
   const [modalVisible, setModalVisible] = useState(false);
   const [question, setQuestion] = useState('');
-  const [result, setResult] = useState('');
+  const [confidence, setConfidence] = useState(null);
+
+  useEffect(() => {
+    fetchQuestion();
+  }, []);
+
+  const fetchConfidence = async () => {
+    try {
+      const response = await axios.get(`${serverIP}/game1/get_confidence`);
+      setConfidence(response.data.confidence);
+    } catch (error) {
+      console.error('정확도 불러오기 오류:', error);
+    }
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchConfidence();
+    }, 1000);
+  
+    return () => clearInterval(interval);
+  }, []);
+  
+  const fetchQuestion = async () => {
+    try {
+      const response = await axios.get(`${serverIP}/game1/get_question`);
+      setQuestion(response.data.question);
+    } catch (error) {
+      console.error('단어를 불러오는 중 오류 발생:', error);
+    }
+  };
 
   if (!fontsLoaded) {
     return <View><Text>Loading...</Text></View>;
   }
-
-  useEffect(() => {
-    fetch(`${serverIP}/game2/get_question`)
-      .then(response => response.json())
-      .then(data => {
-        setQuestion(data.question);
-      })
-      .catch(error => {
-        console.log("Error fetching question:", error);
-      });
-  }, []);
-
-  useEffect(() => {
-    fetch(`${serverIP}/game2/get_game_info`)
-      .then(response => response.json())
-      .then(data => {
-        setResult(data.question);  // 받아온 문제를 상태에 저장
-      })
-      .catch(error => {
-        console.log("Error fetching question:", error);
-      });
-  }, []);
-
-  if (!fontsLoaded) {
-    return <View><Text>Loading...</Text></View>;
-  }
-
+  
   return (
     <View>
       <Header color="#FFFFFF" />
@@ -84,19 +89,19 @@ export default function SpeedGame() {
         </View>
 
         <View style={styles.indexView}>
-          <Text style={styles.indexText1}>{result}</Text>
+          <Text style={styles.indexText1}>4</Text>
           <Text style={styles.indexText2}>/5</Text>
         </View>
       </View>
 
       <View>
-        <Text style={styles.correctText}>정확도 n%</Text>
+        <Text style={styles.correctText}>정확도 {confidence !== null ? `${Math.round(confidence * 100)}%` : '로딩 중...'}</Text>
       </View>
 
       {/* 카메라 비디오 스트리밍 WebView */}
       <View style={styles.cameraFeedWrapper}>
         <WebView
-          source={{ uri: `${serverIP}/game2/video_feed` }}
+          source={{ uri: `${serverIP}/game1/video_feed`}}
           style={styles.cameraFeed}
           javaScriptEnabled={true}
           domStorageEnabled={true}
