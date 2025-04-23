@@ -77,18 +77,14 @@ export default function StudyOnly() {
           <Text style={{ fontSize: 15 }}>혼자서 학습해보세요!</Text>
         </View>
 
-        <View style={{ marginTop: 20 }}>
-          <Text style={{ fontSize: 25, fontWeight: "bold" }}>'안녕하세요'</Text>
-        </View>
-
-        <TouchableOpacity
+        <TouchableOpacity 
+          style={{ marginTop: 20 }}
           onPress={() => {
             completeLesson();
             navigation.pop(2);
           }}
-          style={{ marginTop: 20 }}
         >
-          <Text style={{ fontSize: 25, color: "red" }}>정확도 80%</Text>
+          <Text style={{ fontSize: 25, fontWeight: "bold" }}>'안녕하세요'</Text>
         </TouchableOpacity>
       </View>
 

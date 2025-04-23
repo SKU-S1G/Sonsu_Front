@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Image } from "react-native";
 import React, { useEffect, useState } from "react";
-import {API_URL} from "../../../config"
+import {API_URL} from "../../../config";
 import ShortcutButton from "../ShortcutButton";
 import axios from "axios";
 
@@ -34,14 +34,18 @@ const DailyCheckIn = () => {
         const res = await axios.get(`${API_URL}/attend`);
         const attendedMap = {};
         res.data.forEach((item) => {
-          const date = new Date(item.attend_date).toISOString().split("T")[0];
-          attendedMap[date] = true;
+          const dateObj = new Date(item.attend_date);
+          // KST 기준 날짜 추출
+          const kstOffset = 9 * 60 * 60 * 1000;
+          const localDate = new Date(dateObj.getTime() + kstOffset);
+          const dateString = localDate.toISOString().split("T")[0];
+          attendedMap[dateString] = true;
         });
         setAttendedDates(attendedMap);
       } catch (error) {
         console.error("출석 데이터를 불러오는 중 오류 발생:", error);
       }
-    };
+    };    
 
     fetchAttendanceData();
   }, []);
