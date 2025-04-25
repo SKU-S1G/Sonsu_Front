@@ -13,11 +13,58 @@ import Notice from "../../components/Notice";
 import Menu from "../../components/Menu";
 import { ScrollView } from "react-native-gesture-handler";
 import Pie from "../../components/Pie";
+import { API_URL } from "../../../config";
 
 const AttendanceCheck = () => {
   const [daysInMonth, setDaysInMonth] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDates, setSelectedDates] = useState({}); // 월별 선택된 날짜 상태 추가
+  const [attendanceData, setAttendanceData] = useState([]); // 출석 데이터 상태 추가
+
+  // 출석 데이터 Fetch
+  useEffect(() => {
+    const fetchAttendanceData = async () => {
+      try {
+        const response = await fetch(`${API_URL}/attend`);
+        const data = await response.json();
+        setAttendanceData(data);
+      } catch (error) {
+        console.error("출석 데이터 가져오기 실패", error);
+      }
+    };
+
+    fetchAttendanceData();
+  }, []);
+
+  // 현재 달의 출석한 날 수 계산
+  const getAttendanceCount = () => {
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+
+    // 출석 데이터에서 현재 달에 해당하는 출석일 수 계산
+    const attendedDays = attendanceData.filter((attendance) => {
+      const attendDate = new Date(attendance.attend_date);
+      return (
+        attendDate.getMonth() === currentMonth &&
+        attendDate.getFullYear() === currentYear &&
+        attendance.status === 1
+      );
+    });
+
+    return attendedDays.length;
+  };
+
+  // 현재 달의 일 수 계산
+  const getDaysInMonth = () => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const lastDay = new Date(year, month + 1, 0);
+    return lastDay.getDate(); // 해당 월의 일 수 반환
+  };
+
+  // 출석률 계산
+  const attendanceCount = getAttendanceCount();
+  const totalDays = getDaysInMonth();
+  const attendancePercentage = (attendanceCount / totalDays) * 100;
 
   // 현재 날짜에 맞는 달력 데이터 생성
   useEffect(() => {
@@ -74,21 +121,22 @@ const AttendanceCheck = () => {
     );
   };
 
-  // 날짜 선택 시 상태 업데이트 (월별로 선택된 날짜 추가/삭제)
-  const onDateSelect = (day) => {
-    if (day.isCurrentMonth) {
-      const monthKey = `${currentDate.getFullYear()}-${currentDate.getMonth()}`;
-      setSelectedDates((prevState) => {
-        const selectedForMonth = prevState[monthKey] || [];
-        const updatedSelectedDates = selectedForMonth.includes(day.date)
-          ? selectedForMonth.filter((date) => date !== day.date) // 이미 선택된 날짜는 취소
-          : [...selectedForMonth, day.date]; // 새 날짜 선택
-        return {
-          ...prevState,
-          [monthKey]: updatedSelectedDates,
-        };
-      });
-    }
+  // 출석 상태가 있는지 확인하는 함수
+  const isAttended = (date) => {
+    const formattedDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      date
+    );
+    return attendanceData.some((attendance) => {
+      const attendDate = new Date(attendance.attend_date);
+      return (
+        attendDate.getDate() === formattedDate.getDate() &&
+        attendDate.getMonth() === formattedDate.getMonth() &&
+        attendDate.getFullYear() === formattedDate.getFullYear() &&
+        attendance.status === 1 // 출석 상태
+      );
+    });
   };
 
   // 요일 표시
@@ -120,33 +168,28 @@ const AttendanceCheck = () => {
   const renderItem = ({ item }) => {
     if (!item.date) return null; // item.date가 없다면 렌더링하지 않음
 
-    const monthKey = `${currentDate.getFullYear()}-${currentDate.getMonth()}`;
-    const isSelected =
-      selectedDates[monthKey] && selectedDates[monthKey].includes(item.date);
-
     return (
       <View
         key={`${item.date}-${item.isCurrentMonth}`} // date와 isCurrentMonth를 결합한 고유한 key 사용
         style={[
           styles.day,
           !item.isCurrentMonth && styles.disabledDay, // 현재 월이 아닌 날짜는 비활성화
-
-          isSelected && styles.selectedDay && item.isCurrentMonth, // 선택된 날짜 강조
         ]}
       >
-        <TouchableOpacity onPress={() => onDateSelect(item)}>
+        <TouchableOpacity>
           <Text
             style={[
               styles.dayText,
               !item.isCurrentMonth && styles.disabledDayText, // 현재 월이 아닌 날짜 스타일
               isToday(item) && styles.todayText, // 오늘 날짜일 때 텍스트 색상 변경
+              isAttended(item.date) && styles.attendedDayText, // 출석한 날짜 강조
             ]}
           >
             {item.date}
           </Text>
         </TouchableOpacity>
 
-        {isSelected && item.isCurrentMonth && (
+        {isAttended(item.date) && item.isCurrentMonth && (
           <Image
             source={require("../../../assets/images/SonsuLogo.png")}
             style={styles.selectedImage}
@@ -155,20 +198,6 @@ const AttendanceCheck = () => {
       </View>
     );
   };
-
-  // PieChart
-  const firstValue = 20;
-  const secondValue = 100 - firstValue;
-  const data = [
-    { value: firstValue, color: "#e0e0e0" },
-    { value: secondValue, color: "#FFE694" },
-  ];
-  const radius = 50;
-  const innerRadius = 25;
-  const backgroundColor = "#f5f5f5";
-
-  // 공지 글
-  const NotText = "출석은 하루에 최소 1개 이상의 학습을 완료해야만 인정됩니다.";
 
   return (
     <View>
@@ -211,7 +240,7 @@ const AttendanceCheck = () => {
         </View>
 
         {/* 공지 */}
-        <Notice NotText={NotText} />
+        <Notice NotText="출석은 하루에 최소 1개 이상의 학습을 완료해야만 인정됩니다." />
 
         {/* 나의 00월 출석률은? */}
         <View style={{ width: "90%", alignSelf: "center", marginTop: 45 }}>
@@ -227,16 +256,19 @@ const AttendanceCheck = () => {
           >
             <View style={styles.PieWrap}>
               <Pie
-                data={data}
-                radius={radius}
-                innerRadius={innerRadius}
-                backgroundColor={backgroundColor}
+                data={[
+                  { value: attendancePercentage, color: "#FFE694" },
+                  { value: 100 - attendancePercentage, color: "#e0e0e0" },
+                ]}
+                radius={50}
+                innerRadius={25}
+                backgroundColor="#f5f5f5"
                 donut={true}
               />
             </View>
             <View style={{ marginLeft: 20, justifyContent: "center" }}>
               <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-                {firstValue}%
+                {attendancePercentage.toFixed(1)}%
               </Text>
               <Text style={{ fontSize: 12, marginTop: 8 }}>
                 100%를 향한 도전, 함께 달려보아요!
