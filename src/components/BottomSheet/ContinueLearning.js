@@ -4,6 +4,8 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import ShortcutButton from "../ShortcutButton";
 import axios from "axios";
 import { API_URL } from "../../../config";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 const ProgressBar = ({ progress }) => {
   return (
@@ -17,32 +19,38 @@ const ProgressBar = ({ progress }) => {
 };
 
 const ContinueLearning = () => {
-  // 사용자의 현재 레벨 (예: "중급")
-  const currentLevel = "중급"; // 예제 값, 실제로는 유저 데이터에서 가져와야 함
-
-  // 각 레벨의 진도율
-  const progressData = {
-    초급: 65,
-    중급: 30,
-    고급: 0,
-  };
+  const currentLevel = "초급";
 
   const [nextLesson, setNextLesson] = useState("");
-  
-  useEffect(() => {
-    const fetchProgress = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/progress/continue`, {
-          withCredentials: true,
-        });
-        console.log(response.data.nextLesson); // 응답 데이터를 콘솔에 출력해서 확인
-        setNextLesson(response.data.nextLesson[0]); // 첫 번째 'nextLesson'만 상태에 저장
-      } catch (error) {
-        console.error("Progress 불러오기 실패:", error);
-      }
-    };
-    fetchProgress();
-  }, []);
+  const [progress, setProgress] = useState(0);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchProgress = async () => {
+        try {
+          const response = await axios.get(`${API_URL}/progress/continue`, {
+            withCredentials: true,
+          });
+          setNextLesson(response.data.nextLesson[0]);
+
+          const progressResponse = await axios.get(
+            `${API_URL}/progress/percentage`,
+            {
+              withCredentials: true,
+            }
+          );
+          const progressValue = parseInt(
+            progressResponse.data.progress.replace("%", "")
+          );
+          setProgress(progressValue);
+        } catch (error) {
+          console.error("진도율 또는 이어서 학습 정보 불러오기 실패:", error);
+        }
+      };
+
+      fetchProgress();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
@@ -69,14 +77,17 @@ const ContinueLearning = () => {
         <View style={styles.infoContainer}>
           {/* 제목 */}
           <View>
-            <Text style={styles.partTitle}> {nextLesson.lessonCategory_id}. {nextLesson.word}</Text>
+            <Text style={styles.partTitle}>
+              {nextLesson.lessonCategory_id}. {nextLesson.word}
+            </Text>
             <Text style={styles.levelText}>{currentLevel}</Text>
           </View>
 
           {/* 현재 레벨의 진도율만 표시 */}
-          {progressData[currentLevel] > 0 && (
-            <ProgressBar progress={progressData[currentLevel]} />
-          )}
+
+          {/* 진도율 표시 */}
+          <ProgressBar progress={progress} />
+
           <View style={styles.btnCotainer}>
             <TouchableOpacity style={styles.learnBtn}>
               <Text style={styles.learnBtnText}>배움터 바로가기</Text>
@@ -135,6 +146,7 @@ const styles = StyleSheet.create({
   levelText: {
     fontSize: 14,
     color: "#666",
+    marginTop: 4,
   },
   progressContainer: {
     marginTop: 5,
