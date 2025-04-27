@@ -7,6 +7,7 @@ import {
   Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import BackGround from "../../components/BackGround";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
@@ -17,6 +18,8 @@ import WeeklyRanking from "./WeeklyRanking";
 import ReviewComponent from "../../components/ReviewComponent";
 import tailwind from "tailwind-rn";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import axios from "axios";
+import { API_URL } from "../../../config";
 
 const MyPage = () => {
   const navigation = useNavigation();
@@ -27,6 +30,25 @@ const MyPage = () => {
       { text: "확인", onPress: () => console.log("로그아웃 처리(해야댐)") },
     ]);
   };
+
+  const [userInfo, setUserInfo] = useState({});
+
+  useEffect(() => {
+    try {
+      axios
+        .get(`${API_URL}/login/success`, {
+          withCredentials: true,
+        })
+        .then((response) => {
+          if (response.data) {
+            setUserInfo(response.data);
+            console.log(response.data);
+          }
+        });
+    } catch (error) {
+      console.log("사용자 정보 가져오기 실패:", error.message);
+    }
+  }, []);
 
   return (
     <View>
@@ -44,7 +66,9 @@ const MyPage = () => {
         {/* 오른쪽 .. */}
         <View style={styles.profileContent}>
           <View style={styles.nameContent}>
-            <Text style={{ fontSize: 28, fontWeight: "600" }}>OOO</Text>
+            <Text style={{ fontSize: 28, fontWeight: "600" }}>
+              {userInfo?.username ? userInfo?.username : "undefined"}
+            </Text>
             <Image
               source={require("../../../assets/images/ProfileEdit.png")}
               style={styles.ProfileEdit}
