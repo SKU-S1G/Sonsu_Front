@@ -126,12 +126,12 @@ export default function Classroom() {
           </TouchableOpacity>
         );
       })}
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.reviewButton}
         onPress={() => navigation.navigate("Review")}
       >
         <Text style={styles.reviewButtonText}>Review</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
   

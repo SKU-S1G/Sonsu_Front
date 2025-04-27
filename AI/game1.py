@@ -64,7 +64,7 @@ def draw_text(img, text, position, font, color=(0, 255, 0)):
     draw.text(position, text, font=font, fill=color)
     return np.array(img_pil)
 
-def generate_frames(target_width=480, target_height=640):  # 해상도 인자 추가
+def generate_frames(target_width=480, target_height=700):  # 해상도 인자 추가
     global cap, seq, is_recognizing, _current_question, _game_result, _question_time, _last_confidence
 
     if cap is None or not cap.isOpened():
