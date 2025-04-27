@@ -23,7 +23,7 @@ const WeeklyReport = () => {
       <View>
         {/* 주간 리포트, 한 주 간의 학습 상황을 분석합니다 */}
         <View>
-          <Text style={{ fontSize: 30, textAlign: "center", marginBottom: 5 }}>
+          <Text style={{ fontSize: 30, fontWeight:"bold", textAlign: "center", marginBottom: 5 }}>
             주간 리포트
           </Text>
           <Text

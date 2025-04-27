@@ -40,10 +40,10 @@ def game1_video_feed():
     return Response(generate_frames_game1(target_width=480, target_height=500),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@app.route('/game1/get_confidence', methods=['GET'])
-def game1_get_confidence_api():
-    from game1 import get_confidence
-    return jsonify({"confidence": get_confidence()})
+# @app.route('/game1/get_confidence', methods=['GET'])
+# def game1_get_confidence_api():
+#     from game1 import get_confidence
+#     return jsonify({"confidence": get_confidence()})
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)

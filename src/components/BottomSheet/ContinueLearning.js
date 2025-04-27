@@ -18,7 +18,7 @@ const ProgressBar = ({ progress }) => {
 
 const ContinueLearning = () => {
   // 사용자의 현재 레벨 (예: "중급")
-  const currentLevel = "중급"; // 예제 값, 실제로는 유저 데이터에서 가져와야 함
+  const currentLevel = "초급"; // 예제 값, 실제로는 유저 데이터에서 가져와야 함
 
   // 각 레벨의 진도율
   const progressData = {
