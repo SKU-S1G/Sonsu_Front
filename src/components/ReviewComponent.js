@@ -7,7 +7,7 @@ export default function ReviewComponent() {
   return (
     <View
       style={[
-        tailwind("flex-row bg-white  mt-3 p-4"),
+        tailwind("flex-row bg-white mt-3 p-4"),
         {
           height: 260,
           borderRadius: 16,

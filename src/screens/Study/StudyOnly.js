@@ -50,7 +50,7 @@ export default function StudyOnly() {
       </TouchableOpacity>
 
       <View style={styles.desContainer}>
-        <Text style={{ fontSize: 23, fontWeight: "semibold" }}>혼자해보기</Text>
+        <Text style={{ fontSize: 25, fontWeight: "semibold" }}>혼자해보기</Text>
       </View>
 
       {/* 카메라 비디오 스트리밍 WebView */}
@@ -74,7 +74,7 @@ export default function StudyOnly() {
       
       <View style={{alignItems: "center", marginTop: 20}}>
         <View style={{ marginTop: 10 }}>
-          <Text style={{ fontSize: 15 }}>혼자서 학습해보세요!</Text>
+          <Text style={{ fontSize: 18 }}>혼자서 학습해보세요!</Text>
         </View>
 
         <TouchableOpacity 
@@ -84,7 +84,7 @@ export default function StudyOnly() {
             navigation.pop(2);
           }}
         >
-          <Text style={{ fontSize: 25, fontWeight: "bold" }}>'안녕하세요'</Text>
+          <Text style={{ fontSize: 30, fontWeight: "bold" }}>'안녕하세요'</Text>
         </TouchableOpacity>
       </View>
 
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   },
   title: {
     alignSelf: "flex-start",
-    fontSize: 22,
+    fontSize: 27,
     fontWeight: "bold",
     marginLeft: 5,
     marginTop: 5,
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     width: '100%',
     height: 400,
-    borderRadius: 15,
+    borderRadius: 0,
     overflow: "hidden",
     aspectRatio: 3 / 4,
   },

@@ -66,7 +66,7 @@ const MyPage = () => {
         {/* 오른쪽 .. */}
         <View style={styles.profileContent}>
           <View style={styles.nameContent}>
-            <Text style={{ fontSize: 28, fontWeight: "600" }}>
+            <Text style={{ fontSize: 30, fontWeight: "600" }}>
               {userInfo?.username ? userInfo?.username : "undefined"}
             </Text>
             <Image
@@ -76,15 +76,15 @@ const MyPage = () => {
           </View>
           {/* 랭킹 */}
           <View>
-            <Text style={{ fontSize: 12 }}>상위 20%</Text>
+            <Text style={{ fontSize: 14 }}>상위 20%</Text>
           </View>
           {/* 학습 알림 설정 */}
           <TouchableOpacity style={styles.NotificationBtn}>
             <Image
               source={require("../../../assets/images/Bell.png")}
-              style={{ width: 20, height: 20, marginRight: 5 }}
+              style={{ width: 22, height: 22, marginRight: 5 }}
             />
-            <Text style={{ color: "#000", fontSize: 10, textAlign: "center" }}>
+            <Text style={{ color: "#000", fontSize: 12, textAlign: "center" }}>
               학습 알림 설정
             </Text>
           </TouchableOpacity>
@@ -104,7 +104,7 @@ const MyPage = () => {
           style={styles.tabContent}
           onPress={() => navigation.navigate("AttendanceCheck")}
         >
-          <Text style={{ fontSize: 12 }}>출석체크</Text>
+          <Text style={{ fontSize: 13 }}>출석체크</Text>
           <FontAwesome6
             name="calendar-check"
             size={24}
@@ -117,7 +117,7 @@ const MyPage = () => {
           style={styles.tabContent}
           onPress={() => navigation.navigate("SignReview")}
         >
-          <Text style={{ fontSize: 12 }}>즐겨찾기</Text>
+          <Text style={{ fontSize: 13 }}>즐겨찾기</Text>
           <FontAwesome5
             name="bookmark"
             size={24}
@@ -130,7 +130,7 @@ const MyPage = () => {
           style={styles.tabContent}
           onPress={() => navigation.navigate("WeeklyReport")}
         >
-          <Text style={{ fontSize: 12 }}>주간 리포트</Text>
+          <Text style={{ fontSize: 13 }}>주간 리포트</Text>
           <SimpleLineIcons
             name="docs"
             size={24}
@@ -145,7 +145,7 @@ const MyPage = () => {
         <View
           style={tailwind("flex-row justify-between items-center mt-6 mb-2 ")}
         >
-          <Text style={tailwind("text-lg font-semibold")}>
+          <Text style={tailwind("text-lg font-bold")}>
             오답 수어 다시보기
           </Text>
           <AntDesign name="arrowright" size={24} color="black" />
@@ -176,12 +176,13 @@ const styles = StyleSheet.create({
     width: 100, // 크기 증가
     height: 100, // height 추가
     resizeMode: "contain",
+    padding: 7,
     backgroundColor: "white",
     borderRadius: "50%",
   },
   ProfileEdit: {
-    width: 11,
-    height: 11,
+    width: 12,
+    height: 12,
     resizeMode: "contain",
     marginTop: 5,
     marginLeft: 8,

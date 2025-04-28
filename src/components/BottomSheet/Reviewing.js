@@ -37,7 +37,7 @@ const Reviewing = () => {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "700",
     marginBottom: 20,
   },
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   },
   learnSubBtnText: {
     color: "#6F6C6C",
-    fontSize: 8,
+    fontSize: 10,
     fontWeight: "600",
   },
   shortcutButton: {

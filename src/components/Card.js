@@ -41,7 +41,7 @@ export default function Card({ lesson, currentProgress, onPress }) {
           },
         ]}
       >
-        <Text>다시 학습하기</Text>
+        <Text style={{fontSize: 15}}>다시 학습하기</Text>
       </View>
     </View>
   );
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     width: 115,
   },
   title: {
-    fontSize: 13,
+    fontSize: 14.5,
     fontWeight: "bold",
     textAlign: "center",
     flexShrink: 1,

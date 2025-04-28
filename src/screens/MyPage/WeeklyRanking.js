@@ -25,7 +25,7 @@ const WeeklyRanking = () => {
       >
         <Text style={styles.title}>주간 랭킹</Text>
         <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Feather name="alert-circle" size={20} color="#666666" />
+          <Feather name="alert-circle" size={21} color="#666666" />
         </TouchableOpacity>
       </View>
       {userRank.map((user, index) => (
@@ -47,14 +47,14 @@ const WeeklyRanking = () => {
             </Text>
             <Text
               style={{
-                fontSize: 15,
+                fontSize: 18,
                 marginRight: 4,
                 fontWeight: 500,
               }}
             >
               {user.name}
             </Text>
-            <Text style={{ fontSize: 10 }}>{user.nickname}</Text>
+            <Text style={{ fontSize: 11 }}>{user.nickname}</Text>
           </View>
           <View style={styles.progressContainer}>
             <View style={styles.barBackground}>
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   title: {
-    fontSize: 18,
+    fontSize: 19,
     fontWeight: "700",
     // marginTop: "20",
     marginBottom: "10",
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#ccc", // 하단 선 색상
   },
   userRank: {
-    fontSize: 24,
+    fontSize: 25,
     marginRight: 10,
     fontWeight: 700,
     shadowColor: "#000", // 그림자 색상
