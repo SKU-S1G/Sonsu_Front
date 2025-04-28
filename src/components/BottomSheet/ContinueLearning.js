@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 18,
+    fontSize: 19.5,
     fontWeight: "700",
   },
   content: {
@@ -140,11 +140,11 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   partTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "600",
   },
   levelText: {
-    fontSize: 14,
+    fontSize: 16,
     color: "#666",
     marginTop: 4,
   },
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   progressText: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: "500",
     marginBottom: 5,
   },
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     marginTop: 10,
-    width: "80%",
+    width: "83%",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
   },
   learnBtnText: {
     color: "#000",
-    fontSize: 12,
+    fontSize: 14,
     textAlign: "center",
   },
 });

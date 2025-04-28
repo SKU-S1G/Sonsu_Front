@@ -1,4 +1,3 @@
-# game1.py 수정
 import cv2
 import mediapipe as mp
 import numpy as np
@@ -23,10 +22,7 @@ _game_result = None
 _question_time = 0  # 문제가 제시된 시간
 _min_confidence = 0.8  # 최소 신뢰도 임계값
 _warm_up_time = 3  # 문제 제시 후 판별 시작까지의 대기 시간(초)
-_last_confidence = 0.0
-
-def get_confidence():
-    return _last_confidence
+_confidence_score = None
 
 # 상태 접근 함수
 def set_game_state(question, result):
@@ -37,6 +33,9 @@ def set_game_state(question, result):
 
 def get_game_state():
     return _current_question, _game_result
+
+def get_confidence_score():  # 🔧 추가: 정확도 반환 함수
+    return _confidence_score
 
 # TFLite 모델 로드
 interpreter = tf.lite.Interpreter(model_path=model_path)
@@ -64,8 +63,8 @@ def draw_text(img, text, position, font, color=(0, 255, 0)):
     draw.text(position, text, font=font, fill=color)
     return np.array(img_pil)
 
-def generate_frames(target_width=480, target_height=700):  # 해상도 인자 추가
-    global cap, seq, is_recognizing, _current_question, _game_result, _question_time, _last_confidence
+def generate_frames(target_width=480, target_height=640):  # 해상도 인자 추가
+    global cap, seq, is_recognizing, _current_question, _game_result, _question_time
 
     if cap is None or not cap.isOpened():
         cap = cv2.VideoCapture(0)
@@ -76,7 +75,6 @@ def generate_frames(target_width=480, target_height=700):  # 해상도 인자 �
     is_recognizing = True
     last_prediction_time = 0
     prediction_cooldown = 1.0
-    _last_confidence = confidence
 
     while is_recognizing:
         ret, img = cap.read()
@@ -112,7 +110,7 @@ def generate_frames(target_width=480, target_height=700):  # 해상도 인자 �
 
         if not ready_to_predict and _current_question:
             countdown = max(0, int(_warm_up_time - elapsed_since_question))
-            img = draw_text(img, f"준비하세요... {countdown}초", (10, 50), font, (0, 0, 255))
+            img = draw_text(img, f"준비하세요... {countdown}초", (10, 50), (0, 0, 255))
 
         if joint_list:
             joint_list = np.array(joint_list).flatten()
@@ -131,6 +129,7 @@ def generate_frames(target_width=480, target_height=700):  # 해상도 인자 �
                 confidence = np.max(prediction)
 
                 if confidence >= _min_confidence:
+
                     if _current_question:
                         if predicted_action == _current_question:
                             _game_result = "정답입니다!"

@@ -32,7 +32,7 @@ export default function Review() {
         <View style={styles.textContainer}>
           <Image source={require("../../../assets/images/SpeedGame.png")} style={styles.imageTitle}/>
 
-          <Text style={[tailwind("text-center text-sm mt-2"), { color: "#2d3748" }]}>
+          <Text style={[tailwind("text-center text-md mt-2"), { color: "#2d3748" }]}>
             실시간 게임으로 빠르게 수어 복습!
           </Text>
         </View>
@@ -46,7 +46,7 @@ export default function Review() {
         <View style={styles.textContainer}>
           <Image source={require("../../../assets/images/OXQuiz.png")} style={styles.imageTitle}/>
           
-          <Text style={[tailwind("text-center text-sm mt-2"), { color: "#2d3748" }]}>
+          <Text style={[tailwind("text-center text-md mt-2"), { color: "#2d3748" }]}>
             간단하고 재미있게 수어 복습!
           </Text>
         </View>

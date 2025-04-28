@@ -113,7 +113,7 @@ export default function OXGame() {
     <View>
       <SpeedBack heightMultiplier={1.8} />
       <View>
-        <View style={styles.speedTextContainer}>
+        <TouchableOpacity style={styles.speedTextContainer} onPress={() => navigation.goBack()}>
           <MaskedView
             style={styles.maskedView}
             maskElement={
@@ -129,12 +129,12 @@ export default function OXGame() {
               style={styles.gradient}
             />
           </MaskedView>
-        </View>
+        </TouchableOpacity>
 
         <View style={styles.info}>
           <View>
             {/* 하트 표시 */}
-            <Text style={{ fontSize: 32 }}>
+            <Text style={{ fontSize: 33, marginVertical: 15, }}>
               {"❤️".repeat(hearts)}{"💔".repeat(5 - hearts)}
             </Text>
           </View>
@@ -147,11 +147,12 @@ export default function OXGame() {
                 useNativeControls
                 resizeMode="contain"
                 isLooping
+                shouldPlay
               />
             )}
           </View>
 
-          <Text style={{ marginTop: 30, fontSize: 30, fontWeight: 800 }}>
+          <Text style={{ marginTop: 45, marginBottom: 45, fontSize: 37, fontWeight: 800 }}>
             {quizzes[currentQuestion]?.question}
           </Text>
         </View>
@@ -199,7 +200,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   speedText: {
-    fontSize: 40,
+    fontSize: 43,
     fontFamily: "RixInooAriDuriRegular",
     color: "white",
     marginLeft: 30,
@@ -210,7 +211,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   videoContainer: {
-    width: "80%", // 원하는 비디오 너비
+    width: "83%", // 원하는 비디오 너비
     aspectRatio: 16 / 9, // 16:9 비율로 설정
     overflow: "hidden",
     borderRadius: 10,
@@ -239,7 +240,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   practiceButtonText: {
-    fontSize: 70,
+    fontSize: 73,
     textAlign: "center",
   },
   Image: {

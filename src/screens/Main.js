@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   },
   textYellow: {
     fontWeight: 500,
-    fontSize: 32,
+    fontSize: 40,
     paddingVertical: 6,
   },
   sonsuModel: {
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginTop: -15,
     marginBottom: 15,
-    width: "50%",
+    width: "53%",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   },
   LearnBtnText: {
     color: "#000",
-    fontSize: 20,
+    fontSize: 23,
     textAlign: "center",
   },
 });

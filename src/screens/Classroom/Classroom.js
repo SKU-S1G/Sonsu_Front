@@ -283,8 +283,8 @@ export default function Classroom() {
               <View style={styles.textContainer}>
                 <Text
                   style={styles.title}
-                  numberOfLines={1} // 이 설정은 텍스트가 한 줄로 표시되도록 합니다.
-                  ellipsizeMode="tail" // 텍스트가 길어지면 끝부분을 잘라서 '...'로 표시합니다.
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
                 >
                   Part {lesson.partNumber}. {lesson.title}
                 </Text>
@@ -318,7 +318,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   Title: {
-    fontSize: 20,
+    fontSize: 23.5,
+    fontWeight: "bold",
     textAlign: "center",
     marginTop: 10,
     marginBottom: 25,
@@ -332,7 +333,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   categoryText: {
-    fontSize: 17,
+    fontSize: 19,
     fontWeight: "bold",
     color: "#666",
   },
@@ -456,13 +457,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 13,
+    fontSize: 17,
     fontWeight: "bold",
     // textAlign: "center",
-    flexShrink: 1, // 텍스트가 넘치면 잘리도록 합니다.
+    flexShrink: 1,
   },
   sub: {
-    fontSize: 12,
+    fontSize: 13,
     marginTop: 3,
   },
   check: {
@@ -476,6 +477,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   titleText: {
-    fontSize: 16,
+    fontSize: 19.3,
   },
 });

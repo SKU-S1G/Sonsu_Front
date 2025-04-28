@@ -205,12 +205,12 @@ const AttendanceCheck = () => {
       <BackGround />
 
       <View>
-        <Text style={{ fontSize: 30, fontWeight: "bold", textAlign: "center", marginBottom: 5 }}>
+        <Text style={{ fontSize: 33, fontWeight: "bold", textAlign: "center", marginBottom: 6 }}>
           출석체크
         </Text>
         <Text
           style={{
-            fontSize: 12,
+            fontSize: 15,
             textAlign: "center",
             color: "#333",
             marginBottom: "10%",
@@ -267,10 +267,10 @@ const AttendanceCheck = () => {
               />
             </View>
             <View style={{ marginLeft: 20, justifyContent: "center" }}>
-              <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+              <Text style={{ fontSize: 27, fontWeight: "bold" }}>
                 {attendancePercentage.toFixed(1)}%
               </Text>
-              <Text style={{ fontSize: 12, marginTop: 8 }}>
+              <Text style={{ fontSize: 14, marginTop: 8 }}>
                 100%를 향한 도전, 함께 달려보아요!
               </Text>
             </View>
@@ -301,12 +301,12 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   header: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "bold",
     marginBottom: 20,
   },
   arrow: {
-    fontSize: 20,
+    fontSize: 20.5,
     color: "#333",
   },
   weekdaysContainer: {
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   weekday: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
   },
@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
     margin: 3,
   },
   dayText: {
-    fontSize: 16,
+    fontSize: 18,
   },
   todayText: {
     color: "orange",
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 20,
+    fontSize: 23,
     fontWeight: "600",
     marginBottom: 20,
     paddingLeft: 10,

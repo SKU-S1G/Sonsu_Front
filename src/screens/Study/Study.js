@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 22,
+    fontSize: 30,
     marginTop: 33,
     fontWeight: "bold",
     textAlign: "center",
@@ -157,8 +157,8 @@ const styles = StyleSheet.create({
     width: 330,
   },
   describe: {
-    fontSize: 15,
-    paddingVertical: 2,
+    fontSize: 18,
+    paddingVertical: 3,
   },
   cameraFeedWrapper: {
     width: 350,
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   practiceButtonText: {
-    fontSize: 16,
+    fontSize: 21,
     fontWeight: "bold",
     color: "#333",
     textAlign: "center",

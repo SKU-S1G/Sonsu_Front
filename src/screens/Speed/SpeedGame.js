@@ -22,22 +22,22 @@ export default function SpeedGame() {
     fetchQuestion();
   }, []);
 
-  const fetchConfidence = async () => {
-    try {
-      const response = await axios.get(`${serverIP}/game1/get_confidence`);
-      setConfidence(response.data.confidence);
-    } catch (error) {
-      console.error('정확도 불러오기 오류:', error);
-    }
-  };
+  // const fetchConfidence = async () => {
+  //   try {
+  //     const response = await axios.get(`${serverIP}/game1/get_confidence`);
+  //     setConfidence(response.data.confidence);
+  //   } catch (error) {
+  //     console.error('정확도 불러오기 오류:', error);
+  //   }
+  // };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      fetchConfidence();
-    }, 1000);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     fetchConfidence();
+  //   }, 1000);
   
-    return () => clearInterval(interval);
-  }, []);
+  //   return () => clearInterval(interval);
+  // }, []);
   
   const fetchQuestion = async () => {
     try {
@@ -94,14 +94,14 @@ export default function SpeedGame() {
         </View>
       </View>
 
-      <View>
+      {/* <View>
         <Text style={styles.correctText}>정확도 {confidence !== null ? `${Math.round(confidence * 100)}%` : '로딩 중...'}</Text>
-      </View>
+      </View> */}
 
       {/* 카메라 비디오 스트리밍 WebView */}
       <View style={styles.cameraFeedWrapper}>
         <WebView
-          source={{ uri: `${serverIP}/game1/video_feed`}}
+          source={{ uri: `${serverIP}/game1/video_feed` }}
           style={styles.cameraFeed}
           javaScriptEnabled={true}
           domStorageEnabled={true}

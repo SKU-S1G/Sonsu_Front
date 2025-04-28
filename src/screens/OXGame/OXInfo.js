@@ -50,16 +50,16 @@ export default function OXInfo() {
             style={styles.image}
           />
           <View style={styles.infoText}>
-            <Text style={{ fontSize: 16 }}>캐릭터의 수어를 보고</Text>
-            <Text style={{ fontSize: 16 }}>정답을 맞춰보세요!!</Text>
+            <Text style={{ fontSize: 18 }}>캐릭터의 수어를 보고</Text>
+            <Text style={{ fontSize: 18 }}>정답을 맞춰보세요!!</Text>
           </View>
         </View>
 
         <View style={styles.importantView}>
-          <Text style={styles.importantTitle}>🎯게임 방법🎮</Text>
-          <Text style={styles.importantText}>✅ 해당 수어가 정답이라면 O,</Text>
+          <Text style={styles.importantTitle}>🎯 게임 방법 🎮</Text>
+          <Text style={styles.importantText}>✅  해당 수어가 정답이라면 O,</Text>
           <Text style={styles.importantText2}>오답이라면 X를 누르세요</Text>
-          <Text style={styles.importantText}>✅ 해당 수어가 정답이라면 O,</Text>
+          <Text style={styles.importantText}>✅  해당 수어가 정답이라면 O,</Text>
           <Text style={styles.importantText2}>오답이라면 X를 누르세요</Text>
         </View>
 
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "30%",
-    height: 170,
+    height: 190,
     resizeMode: "contain",
     // marginTop: 50,
     marginRight: 30,
@@ -123,24 +123,24 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 2, height: 5 },
   },
   importantTitle: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
   },
   importantText: {
-    fontSize: 15,
+    fontSize: 16.5,
     width: "90%",
     alignSelf: "center",
     marginTop: 20,
   },
   importantText2: {
-    fontSize: 15,
+    fontSize: 16.5,
     width: "90%",
     alignSelf: "center",
     marginLeft: 50,
   },
   practiceButton: {
-    width: "60%",
+    width: "63%",
     marginTop: 50,
     alignSelf: "center",
     backgroundColor: "#FFE694",
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   practiceButtonText: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "bold",
     color: "#333",
     textAlign: "center",

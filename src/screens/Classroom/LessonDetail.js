@@ -211,7 +211,7 @@ export default function LessonDetail() {
                 </View>
               )}
               <View style={styles.imageContainer}>
-                <Image source={lesson.animationPath} style={styles.image} />
+                <Image source={require("../../../assets/images/Sign.png")} style={styles.image} />
               </View>
             </View>
 
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   Title: {
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: "bold",
   },
   categoryContainer: {
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   categoryText: {
-    fontSize: 17,
+    fontSize: 19,
     fontWeight: "bold",
     color: "#666",
   },
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   titleText: {
-    fontSize: 16,
+    fontSize: 19.3,
   },
   NowContainer: {
     paddingHorizontal: 18,
@@ -379,13 +379,13 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   title: {
-    fontSize: 13,
+    fontSize: 17,
     fontWeight: "bold",
     // textAlign: "center",
     flexShrink: 1, // 텍스트가 넘치면 잘리도록 합니다.
   },
   sub: {
-    fontSize: 12,
+    fontSize: 15,
     marginTop: 3,
   },
 });

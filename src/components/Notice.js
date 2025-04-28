@@ -7,7 +7,7 @@ const Notice = ({ NotText }) => {
         source={require("../../assets/images/Megaphone.png")}
         style={styles.megaphone}
       />
-      <Text style={{ fontSize: 10.5 }}>{NotText}</Text>
+      <Text style={{ fontSize: 11.5 }}>{NotText}</Text>
     </View>
   );
 };
