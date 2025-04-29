@@ -10,6 +10,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { WebView } from "react-native-webview";
 import { serverIP } from "../../../config";
 import GameModal from '../../components/GameModal';
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
 export default function SpeedGame() {
@@ -17,6 +18,7 @@ export default function SpeedGame() {
   const [modalVisible, setModalVisible] = useState(false);
   const [question, setQuestion] = useState('');
   const [confidence, setConfidence] = useState(null);
+  const navigation = useNavigation();
 
   useEffect(() => {
     fetchQuestion();
@@ -122,6 +124,10 @@ export default function SpeedGame() {
         onClose={() => setModalVisible(false)}
         title="모든 문제를 다 풀었습니다."
         content={<Image source={require("../../../assets/images/sonsuModel.png")} style={styles.Image} />}
+        onOxPress={() => {
+          setModalVisible(false);
+          navigation.navigate('Review');
+        }}
       />
     </View>
   );
