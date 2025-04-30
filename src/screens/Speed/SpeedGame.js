@@ -17,7 +17,7 @@ export default function SpeedGame() {
   const [fontsLoaded] = useFonts(customFonts);
   const [modalVisible, setModalVisible] = useState(false);
   const [question, setQuestion] = useState('');
-  const [confidence, setConfidence] = useState(null);
+  // const [confidence, setConfidence] = useState(null);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   cameraFeedWrapper: {
     alignSelf: 'center',
     width: "100%",
-    height: 450,
+    // height: 450,
     borderRadius: 12,
     overflow: "hidden",
     marginTop: 50,
