@@ -15,11 +15,40 @@ import StudyBack from "../../components/StudyBack";
 import axios from "axios";
 import { API_URL } from "../../../config";
 import { io } from "socket.io-client";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { Alert } from "react-native";
 
 export default function LessonDetail() {
   const navigation = useNavigation();
   const route = useRoute();
   const { lesson, selectedLevel: initialSelectedLevel } = route.params;
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [bookmarkedLessons, setBookmarkedLessons] = useState([]); // 북마크된 lesson id 목록
+  const [bookmarkedTopics, setBookmarkedTopics] = useState([]);
+
+  const handleBookmark = async (topicId) => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/review/save`,
+        { topicId },
+        { withCredentials: true }
+      );
+      console.log(response.data.message);
+      Alert.alert("알림", response.data.message);
+
+      // 북마크 상태 업데이트 (토글 기능)
+      setBookmarkedTopics((prev) => {
+        if (prev.includes(topicId)) {
+          return prev.filter((id) => id !== topicId);
+        } else {
+          return [...prev, topicId];
+        }
+      });
+    } catch (error) {
+      console.log(error.message);
+      Alert.alert("오류", "즐겨찾기 추가에 실패했습니다.");
+    }
+  };
 
   const levelColors = {
     초급: "#39B360",
@@ -41,12 +70,9 @@ export default function LessonDetail() {
     socketInstance.on("connect", () => {
       const fetchUserProgress = async () => {
         try {
-          const response = await axios.post(
-            `${API_URL}/progress/topics`,
-            {
-              withCredentials: true,
-            }
-          );
+          const response = await axios.post(`${API_URL}/progress/topics`, {
+            withCredentials: true,
+          });
           if (response.status === 200) {
             // console.log("학습 진행 데이터:", response.data);
             setProgress(response.data);
@@ -191,7 +217,7 @@ export default function LessonDetail() {
           / {topics.length} 강의
         </Text>
       </View>
-    
+
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {topics.map((topic, index) => (
           <TouchableOpacity
@@ -205,13 +231,27 @@ export default function LessonDetail() {
             }
           >
             <View style={styles.card}>
+              <TouchableOpacity
+                onPress={() => handleBookmark(topic.id)}
+                style={{ position: "absolute", top: 10, left: 10, zIndex: 2 }}
+              >
+                {bookmarkedTopics.includes(topic.id) ? (
+                  <FontAwesome name="bookmark" size={24} color="black" />
+                ) : (
+                  <FontAwesome name="bookmark-o" size={24} color="black" />
+                )}
+              </TouchableOpacity>
+
               {index !== 0 && isTopicLocked(topic.lessonCategory_id, index) && (
                 <View style={styles.lockOverlay}>
                   <MaterialCommunityIcons name="lock" size={30} color="#fff" />
                 </View>
               )}
               <View style={styles.imageContainer}>
-                <Image source={require("../../../assets/images/Sign.png")} style={styles.image} />
+                <Image
+                  source={require("../../../assets/images/Sign.png")}
+                  style={styles.image}
+                />
               </View>
             </View>
 
@@ -298,11 +338,20 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   card: {
+    position: "relative", // 아이콘 절대 위치 기준
     minHeight: "fit-content",
     padding: 13,
     borderRadius: 10,
     backgroundColor: "#f9f9f9",
   },
+
+  // bookmarkIcon: {
+  //   position: "absolute",
+  //   top: 8,
+  //   left: 8,
+  //   zIndex: 2,
+  // },
+
   lockOverlay: {
     position: "absolute",
     top: 0,

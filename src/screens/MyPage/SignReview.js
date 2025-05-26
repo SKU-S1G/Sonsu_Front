@@ -5,9 +5,36 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useState, useEffect } from "react";
 import classData from "../../../utils/ClassData";
+import axios from "axios";
+import { API_URL } from "../../../config";
 
 const SignReview = () => {
   const [selectedLevel, setSelectedLevel] = useState("초급");
+  const [savedSigns, setSavedSigns] = useState([]);
+
+  useEffect(() => {
+    const fetchSavedSigns = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/review/lessons`, {
+          headers: {
+            Authorization: accessToken, // 필요 시 토큰 변수 설정
+          },
+        });
+        setSavedSigns(response.data);
+      } catch (error) {
+        console.error("즐겨찾기 데이터를 불러오지 못했습니다:", error);
+      }
+    };
+
+    fetchSavedSigns();
+  }, []);
+
+  const filteredSigns = savedSigns.filter((item) => {
+    const lesson = classData[selectedLevel]?.find(
+      (lesson) => lesson.id === item.lesson_id
+    );
+    return !!lesson; // 현재 카테고리에 해당하는 것만 필터링
+  });
 
   const [progress, setProgress] = useState({
     초급: { lessonId: 3, lastCompletedTopic: "감사합니다" },
@@ -80,6 +107,41 @@ const SignReview = () => {
         </Text>
       </View>
       {renderCategoryButtons()}
+      <View style={{ paddingHorizontal: 20 }}>
+        {filteredSigns.length === 0 ? (
+          <Text style={{ textAlign: "center", marginTop: 30 }}>
+            저장된 수어가 없습니다.
+          </Text>
+        ) : (
+          filteredSigns.map((item) => {
+            const lesson = classData[selectedLevel]?.find(
+              (lesson) => lesson.id === item.lesson_id
+            );
+
+            return (
+              <TouchableOpacity
+                key={item.userSaved_id}
+                style={{
+                  marginBottom: 15,
+                  padding: 15,
+                  borderRadius: 10,
+                  backgroundColor: "#f1f1f1",
+                }}
+                onPress={() =>
+                  navigation.navigate("Study", { topic: item, lesson })
+                }
+              >
+                <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                  {item.word}
+                </Text>
+                <Text style={{ fontSize: 12, color: "#666" }}>
+                  레슨 ID: {item.lesson_id}
+                </Text>
+              </TouchableOpacity>
+            );
+          })
+        )}
+      </View>
     </View>
   );
 };
