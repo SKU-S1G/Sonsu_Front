@@ -84,7 +84,7 @@ export default function StudyOnly() {
             navigation.pop(2);
           }}
         >
-          <Text style={{ fontSize: 30, fontWeight: "bold" }}>'안녕하세요'</Text>
+          <Text style={{ fontSize: 30, fontWeight: "bold" }}>'{topic.word}'</Text>
         </TouchableOpacity>
       </View>
 
