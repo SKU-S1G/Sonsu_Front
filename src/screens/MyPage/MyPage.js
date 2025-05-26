@@ -143,11 +143,9 @@ const MyPage = () => {
       <ScrollView style={styles.contentWrap}>
         <WeeklyRanking />
         <View
-          style={tailwind("flex-row justify-between items-center mt-6 mb-2 ")}
+          style={tailwind("flex-row justify-between items-center mt-12 mb-2 ")}
         >
-          <Text style={tailwind("text-lg font-bold")}>
-            오답 수어 다시보기
-          </Text>
+          <Text style={tailwind("text-lg font-bold")}>오답 수어 다시보기</Text>
           <AntDesign name="arrowright" size={24} color="black" />
         </View>
 
