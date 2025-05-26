@@ -18,7 +18,7 @@ const Menu = () => {
           tabBarItemStyle: styles.tabItem, // 개별 아이템 스타일 적용
           tabBarLabelStyle: styles.tabLabel, // 라벨 스타일 적용
           showLabel: true, // 라벨 표시
-          tabBarActiveTintColor: "#FFE694", // 활성화된 탭의 텍스트와 아이콘 색상 변경
+          tabBarActiveTintColor: "#FFCA1A", // 활성화된 탭의 텍스트와 아이콘 색상 변경
           tabBarInactiveTintColor: "black", // 비활성화된 탭의 텍스트와 아이콘 색상 변경
           headerShown: false,
         }}
@@ -44,7 +44,7 @@ const Menu = () => {
                 style={styles.centerIcon} // 사진은 그대로 유지
               />
             ),
-            tabBarLabel: "",
+            tabBarLabel: "SONSU",
           }}
         />
         <Tab.Screen
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
     position: "absolute",
-    top: -40,
+    top: -45,
   },
   tabLabel: {
     marginTop: 10,

@@ -15,12 +15,39 @@ import Feather from "@expo/vector-icons/Feather";
 import axios from "axios";
 import { API_URL } from "../../../config";
 import { io } from "socket.io-client";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 export default function Classroom() {
   const [selectedLevel, setSelectedLevel] = useState("초급");
   const [progress, setProgress] = useState([]);
   const [topics, setTopics] = useState([]);
   const [nextLesson, setNextLesson] = useState("");
+  const [isBookmarked, setIsBookmarked] = useState(false); // 북마크
+  const [bookmarkedLessons, setBookmarkedLessons] = useState([]); // 북마크된 lesson id 목록
+
+  const handleBookmark = async (lessonId) => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/review/save`,
+        { lessonId },
+        { withCredentials: true }
+      );
+      console.log(response.data.message);
+      Alert.alert("알림", response.data.message);
+
+      // 북마크 상태 업데이트 (토글 기능)
+      setBookmarkedLessons((prev) => {
+        if (prev.includes(lessonId)) {
+          return prev.filter((id) => id !== lessonId);
+        } else {
+          return [...prev, lessonId];
+        }
+      });
+    } catch (error) {
+      console.log(error.message);
+      Alert.alert("오류", "즐겨찾기 추가에 실패했습니다.");
+    }
+  };
 
   const navigation = useNavigation();
 
@@ -86,7 +113,7 @@ export default function Classroom() {
         // 중급은 currentProgress >= 6 이상일 때 열리게 설정
         const levelOrder = index + 1;
         const isLocked = currentProgress < (levelOrder - 1) * 5; // 예시 기준 (레벨당 5개 있다고 가정)
-  
+
         return (
           <TouchableOpacity
             key={level}
@@ -134,7 +161,6 @@ export default function Classroom() {
       </TouchableOpacity> */}
     </View>
   );
-  
 
   const [lessons, setLessons] = useState([]);
   const levels = { 초급: 1, 중급: 2, 고급: 3 };
@@ -148,13 +174,15 @@ export default function Classroom() {
         `${API_URL}/lessons/${levelId}/categories`,
         { withCredentials: true }
       );
-      const totalCategories = response.data.categoriesWithWord.map((lesson) => ({
-        id: lesson.lessonCategory_id,
-        partNumber: lesson.part_number,
-        title: lesson.category,
-        word: lesson.words,
-        categoryImage: require("../../../assets/images/Sign.png"),
-      }));
+      const totalCategories = response.data.categoriesWithWord.map(
+        (lesson) => ({
+          id: lesson.lessonCategory_id,
+          partNumber: lesson.part_number,
+          title: lesson.category,
+          word: lesson.words,
+          categoryImage: require("../../../assets/images/Sign.png"),
+        })
+      );
       setLessons(totalCategories);
       console.log("카테고리 데이터:", totalCategories);
     } catch (error) {
@@ -209,12 +237,18 @@ export default function Classroom() {
             },
           ]}
           onPress={() =>
-            navigation.navigate("Study", { topic: nextLesson, lesson: nextLesson })
+            navigation.navigate("Study", {
+              topic: nextLesson,
+              lesson: nextLesson,
+            })
           }
         >
           <View style={styles.card_}>
             <View style={styles.imageContainer_}>
-            <Image source={require("../../../assets/images/Sign.png")} style={styles.image_} />
+              <Image
+                source={require("../../../assets/images/Sign.png")}
+                style={styles.image_}
+              />
             </View>
           </View>
 
@@ -236,7 +270,7 @@ export default function Classroom() {
           />
         </TouchableOpacity>
       </View>
-      
+
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {lessons.map((lesson) => {
           const isLocked = lesson.partNumber > currentProgress + 1;
@@ -267,6 +301,21 @@ export default function Classroom() {
                   },
                 ]}
               >
+                <TouchableOpacity
+                  style={{
+                    position: "absolute",
+                    top: 8,
+                    left: 8,
+                    zIndex: 10,
+                  }}
+                  onPress={() => handleBookmark(lesson.id)}
+                >
+                  {isBookmarked ? (
+                    <FontAwesome name="bookmark" size={24} color="black" />
+                  ) : (
+                    <FontAwesome name="bookmark-o" size={24} color="black" />
+                  )}
+                </TouchableOpacity>
                 {isLocked && (
                   <View style={styles.lockOverlay}>
                     <MaterialCommunityIcons
@@ -280,7 +329,7 @@ export default function Classroom() {
                   <Image source={lesson.categoryImage} style={styles.image} />
                 </View>
               </View>
-              <View style={styles.textContainer}>
+              <View style={styles.textContainer2}>
                 <Text
                   style={styles.title}
                   numberOfLines={1}
@@ -290,9 +339,10 @@ export default function Classroom() {
                 </Text>
 
                 <Text style={styles.sub} numberOfLines={1} ellipsizeMode="tail">
-                  {Array.isArray(lesson.word) ? lesson.word.join(", ") : lesson.word}
+                  {Array.isArray(lesson.word)
+                    ? lesson.word.join(", ")
+                    : lesson.word}
                 </Text>
-
               </View>
               <Feather
                 name="check-circle"
@@ -454,6 +504,13 @@ const styles = StyleSheet.create({
     // alignItems: "center",
     marginLeft: 20,
     // marginBottom: 15,
+    flex: 1,
+  },
+  textContainer2: {
+    justifyContent: "center",
+
+    marginLeft: 20,
+    marginBottom: -15,
     flex: 1,
   },
   title: {
