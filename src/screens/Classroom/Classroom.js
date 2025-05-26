@@ -16,6 +16,7 @@ import axios from "axios";
 import { API_URL } from "../../../config";
 import { io } from "socket.io-client";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 export default function Classroom() {
   const [selectedLevel, setSelectedLevel] = useState("초급");
@@ -183,6 +184,15 @@ export default function Classroom() {
           categoryImage: require("../../../assets/images/Sign.png"),
         })
       );
+      const totalCategories = response.data.categoriesWithWord.map(
+        (lesson) => ({
+          id: lesson.lessonCategory_id,
+          partNumber: lesson.part_number,
+          title: lesson.category,
+          word: lesson.words,
+          categoryImage: require("../../../assets/images/Sign.png"),
+        })
+      );
       setLessons(totalCategories);
       console.log("카테고리 데이터:", totalCategories);
     } catch (error) {
@@ -245,6 +255,10 @@ export default function Classroom() {
         >
           <View style={styles.card_}>
             <View style={styles.imageContainer_}>
+              <Image
+                source={require("../../../assets/images/Sign.png")}
+                style={styles.image_}
+              />
               <Image
                 source={require("../../../assets/images/Sign.png")}
                 style={styles.image_}
