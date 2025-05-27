@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingVertical: 20,
     paddingHorizontal: 40,
-    paddingBottom: 380,
+    paddingBottom: 180,
   },
 });
 
