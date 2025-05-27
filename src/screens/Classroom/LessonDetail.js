@@ -27,16 +27,16 @@ export default function LessonDetail() {
   const [bookmarkedTopics, setBookmarkedTopics] = useState([]);
 
   const handleBookmark = async (topicId) => {
+    console.log("전달된 topicId:", topicId);
     try {
       const response = await axios.post(
         `${API_URL}/review/save`,
-        { topicId },
+        { lessonId: topicId }, // 서버에 lessonId로 topicId를 보내는 게 맞는지 API 문서 확인 필요
         { withCredentials: true }
       );
       console.log(response.data.message);
       Alert.alert("알림", response.data.message);
 
-      // 북마크 상태 업데이트 (토글 기능)
       setBookmarkedTopics((prev) => {
         if (prev.includes(topicId)) {
           return prev.filter((id) => id !== topicId);
@@ -108,7 +108,7 @@ export default function LessonDetail() {
         const response = await axios.get(
           `${API_URL}/lessons/${lesson.id}/topics`
         );
-        // console.log("받은 주제 데이터:", response.data);
+        console.log("받은 주제 데이터:", response.data);
         setTopics(response.data);
       } catch (error) {
         console.log("불러오기 실패:", error.message);
@@ -232,10 +232,10 @@ export default function LessonDetail() {
           >
             <View style={styles.card}>
               <TouchableOpacity
-                onPress={() => handleBookmark(topic.id)}
+                onPress={() => handleBookmark(topic.lesson_id)} // lesson_id는 서버용, topic.id는 표시용
                 style={{ position: "absolute", top: 10, left: 10, zIndex: 2 }}
               >
-                {bookmarkedTopics.includes(topic.id) ? (
+                {bookmarkedTopics.includes(topic.lesson_id) ? (
                   <FontAwesome name="bookmark" size={24} color="black" />
                 ) : (
                   <FontAwesome name="bookmark-o" size={24} color="black" />

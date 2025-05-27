@@ -4,7 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import MaskedView from "@react-native-masked-view/masked-view";
 import SpeedBack from "../../components/SpeedBack";
 import { useNavigation } from "@react-navigation/native";
-import { Video } from 'expo-av';
+import { Video } from "expo-av";
 import { API_URL } from "../../../config";
 import { useFonts } from "expo-font";
 import { customFonts } from "../../../src/constants/fonts";
@@ -27,7 +27,11 @@ export default function OXGame() {
   const navigation = useNavigation();
 
   if (!fontsLoaded) {
-    return <View><Text>Loading...</Text></View>;
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    );
   }
 
   useEffect(() => {
@@ -80,7 +84,7 @@ export default function OXGame() {
       setModalVisible(true); // 이미 제출했음을 GameModal로 알리기
       return;
     }
-  
+
     setIsSubmitting(true);
     try {
       const res = await axios.post(`${API_URL}/quiz/check`, {
@@ -106,14 +110,17 @@ export default function OXGame() {
   console.log("quizResult", quizResult);
 
   useEffect(() => {
-    console.log("userAnswer",userAnswers);
+    console.log("userAnswer", userAnswers);
   }, [userAnswers]);
 
   return (
     <View>
       <SpeedBack heightMultiplier={1.8} />
       <View>
-        <TouchableOpacity style={styles.speedTextContainer} onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          style={styles.speedTextContainer}
+          onPress={() => navigation.goBack()}
+        >
           <MaskedView
             style={styles.maskedView}
             maskElement={
@@ -134,8 +141,9 @@ export default function OXGame() {
         <View style={styles.info}>
           <View>
             {/* 하트 표시 */}
-            <Text style={{ fontSize: 33, marginVertical: 15, }}>
-              {"❤️".repeat(hearts)}{"💔".repeat(5 - hearts)}
+            <Text style={{ fontSize: 33, marginVertical: 15 }}>
+              {"❤️".repeat(hearts)}
+              {"💔".repeat(5 - hearts)}
             </Text>
           </View>
 
@@ -152,19 +160,26 @@ export default function OXGame() {
             )}
           </View>
 
-          <Text style={{ marginTop: 45, marginBottom: 45, fontSize: 37, fontWeight: 800 }}>
+          <Text
+            style={{
+              marginTop: 45,
+              marginBottom: 45,
+              fontSize: 37,
+              fontWeight: 800,
+            }}
+          >
             {quizzes[currentQuestion]?.question}
           </Text>
         </View>
 
         <View style={styles.btnwrap}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.btn}
             onPress={() => handleAnswer(true)}
           >
             <Text style={styles.practiceButtonText}>⭕️</Text>
           </TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.btn}
             onPress={() => handleAnswer(false)}
           >
@@ -177,10 +192,15 @@ export default function OXGame() {
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         title={`${quizResult.total}문제 중에 ${quizResult.score}문제 맞췄습니다!`}
-        content={<Image source={require("../../../assets/images/sonsuModel.png")} style={styles.Image} />}
+        content={
+          <Image
+            source={require("../../../assets/images/sonsuModel.png")}
+            style={styles.Image}
+          />
+        }
         onOxPress={() => {
-          setModalVisible(false);  // 모달 닫기
-          navigation.navigate("Review");  // Review 페이지로 이동
+          setModalVisible(false); // 모달 닫기
+          navigation.navigate("Review"); // Review 페이지로 이동
         }}
       />
     </View>

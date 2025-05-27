@@ -51,15 +51,15 @@ export default function OXInfo() {
           />
           <View style={styles.infoText}>
             <Text style={{ fontSize: 18 }}>캐릭터의 수어를 보고</Text>
-            <Text style={{ fontSize: 18 }}>정답을 맞춰보세요!!</Text>
+            <Text style={{ fontSize: 18 }}>정답을 맞춰보세요!</Text>
           </View>
         </View>
 
         <View style={styles.importantView}>
           <Text style={styles.importantTitle}>🎯 게임 방법 🎮</Text>
-          <Text style={styles.importantText}>✅  해당 수어가 정답이라면 O,</Text>
+          <Text style={styles.importantText}>✅ 해당 수어가 정답이라면 O,</Text>
           <Text style={styles.importantText2}>오답이라면 X를 누르세요</Text>
-          <Text style={styles.importantText}>✅  해당 수어가 정답이라면 O,</Text>
+          <Text style={styles.importantText}>✅ 해당 수어가 정답이라면 O,</Text>
           <Text style={styles.importantText2}>오답이라면 X를 누르세요</Text>
         </View>
 
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   importantText: {
-    fontSize: 16.5,
+    fontSize: 16,
     width: "90%",
     alignSelf: "center",
     marginTop: 20,

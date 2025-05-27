@@ -16,7 +16,6 @@ import axios from "axios";
 import { API_URL } from "../../../config";
 import { io } from "socket.io-client";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 export default function Classroom() {
   const [selectedLevel, setSelectedLevel] = useState("초급");
@@ -26,29 +25,7 @@ export default function Classroom() {
   const [isBookmarked, setIsBookmarked] = useState(false); // 북마크
   const [bookmarkedLessons, setBookmarkedLessons] = useState([]); // 북마크된 lesson id 목록
 
-  const handleBookmark = async (lessonId) => {
-    try {
-      const response = await axios.post(
-        `${API_URL}/review/save`,
-        { lessonId },
-        { withCredentials: true }
-      );
-      console.log(response.data.message);
-      Alert.alert("알림", response.data.message);
-
-      // 북마크 상태 업데이트 (토글 기능)
-      setBookmarkedLessons((prev) => {
-        if (prev.includes(lessonId)) {
-          return prev.filter((id) => id !== lessonId);
-        } else {
-          return [...prev, lessonId];
-        }
-      });
-    } catch (error) {
-      console.log(error.message);
-      Alert.alert("오류", "즐겨찾기 추가에 실패했습니다.");
-    }
-  };
+  const handleBookmark = async (lessonId) => {};
 
   const navigation = useNavigation();
 
@@ -184,15 +161,6 @@ export default function Classroom() {
           categoryImage: require("../../../assets/images/Sign.png"),
         })
       );
-      const totalCategories = response.data.categoriesWithWord.map(
-        (lesson) => ({
-          id: lesson.lessonCategory_id,
-          partNumber: lesson.part_number,
-          title: lesson.category,
-          word: lesson.words,
-          categoryImage: require("../../../assets/images/Sign.png"),
-        })
-      );
       setLessons(totalCategories);
       console.log("카테고리 데이터:", totalCategories);
     } catch (error) {
@@ -259,10 +227,6 @@ export default function Classroom() {
                 source={require("../../../assets/images/Sign.png")}
                 style={styles.image_}
               />
-              <Image
-                source={require("../../../assets/images/Sign.png")}
-                style={styles.image_}
-              />
             </View>
           </View>
 
@@ -322,14 +286,7 @@ export default function Classroom() {
                     left: 8,
                     zIndex: 10,
                   }}
-                  onPress={() => handleBookmark(lesson.id)}
-                >
-                  {isBookmarked ? (
-                    <FontAwesome name="bookmark" size={24} color="black" />
-                  ) : (
-                    <FontAwesome name="bookmark-o" size={24} color="black" />
-                  )}
-                </TouchableOpacity>
+                ></TouchableOpacity>
                 {isLocked && (
                   <View style={styles.lockOverlay}>
                     <MaterialCommunityIcons
