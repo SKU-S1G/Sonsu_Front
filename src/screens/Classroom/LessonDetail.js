@@ -15,7 +15,7 @@ import StudyBack from "../../components/StudyBack";
 import axios from "axios";
 import { API_URL } from "../../../config";
 import { io } from "socket.io-client";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { Alert } from "react-native";
 import { getToken } from "../../../authStorage";
 
@@ -23,8 +23,6 @@ export default function LessonDetail() {
   const navigation = useNavigation();
   const route = useRoute();
   const { lesson, selectedLevel: initialSelectedLevel } = route.params;
-  const [isBookmarked, setIsBookmarked] = useState(false);
-  const [bookmarkedLessons, setBookmarkedLessons] = useState([]); // 북마크된 lesson id 목록
   const [bookmarkedTopics, setBookmarkedTopics] = useState([]);
 
   useEffect(() => {
@@ -315,16 +313,18 @@ export default function LessonDetail() {
             }
           >
             <View style={styles.card}>
-              <TouchableOpacity
-                onPress={() => handleBookmark(topic.lesson_id)} // lesson_id는 서버용, topic.id는 표시용
-                style={{ position: "absolute", top: 10, left: 10, zIndex: 2 }}
-              >
-                {bookmarkedTopics.includes(topic.lesson_id) ? (
-                  <FontAwesome name="bookmark" size={24} color="black" />
-                ) : (
-                  <FontAwesome name="bookmark-o" size={24} color="black" />
-                )}
-              </TouchableOpacity>
+              {!isTopicLocked(topic.lessonCategory_id, index) && (
+                <TouchableOpacity
+                  onPress={() => handleBookmark(topic.lesson_id)}
+                  style={{ position: "absolute", top: 10, left: 10, zIndex: 2 }}
+                >
+                  {bookmarkedTopics.includes(topic.lesson_id) ? (
+                    <AntDesign name="star" size={24} color="#FFCA1A" />
+                  ) : (
+                    <AntDesign name="staro" size={24} color="#FFCA1A" />
+                  )}
+                </TouchableOpacity>
+              )}
 
               {index !== 0 && isTopicLocked(topic.lessonCategory_id, index) && (
                 <View style={styles.lockOverlay}>
