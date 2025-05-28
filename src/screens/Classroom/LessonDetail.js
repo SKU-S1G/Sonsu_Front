@@ -17,6 +17,7 @@ import { API_URL } from "../../../config";
 import { io } from "socket.io-client";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Alert } from "react-native";
+import { getToken } from "../../../authStorage";
 
 export default function LessonDetail() {
   const navigation = useNavigation();
@@ -26,28 +27,78 @@ export default function LessonDetail() {
   const [bookmarkedLessons, setBookmarkedLessons] = useState([]); // 북마크된 lesson id 목록
   const [bookmarkedTopics, setBookmarkedTopics] = useState([]);
 
-  const handleBookmark = async (topicId) => {
-    console.log("전달된 topicId:", topicId);
-    try {
-      const response = await axios.post(
-        `${API_URL}/review/save`,
-        { lessonId: topicId }, // 서버에 lessonId로 topicId를 보내는 게 맞는지 API 문서 확인 필요
-        { withCredentials: true }
-      );
-      console.log(response.data.message);
-      Alert.alert("알림", response.data.message);
-
-      setBookmarkedTopics((prev) => {
-        if (prev.includes(topicId)) {
-          return prev.filter((id) => id !== topicId);
-        } else {
-          return [...prev, topicId];
+  useEffect(() => {
+    const fetchBookmarkedTopics = async () => {
+      try {
+        const accessToken = await getToken();
+        if (!accessToken) {
+          console.log("토큰이 없습니다");
+          return;
         }
-      });
-    } catch (error) {
-      console.log(error.message);
-      Alert.alert("오류", "즐겨찾기 추가에 실패했습니다.");
+        const response = await axios.get(`${API_URL}/review/lessons`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // 토큰 넣기
+          },
+        });
+
+        // setBookmarkedTopics(response.data);
+        setBookmarkedTopics(response.data.map((item) => item.lesson_id));
+      } catch (error) {
+        console.log("북마크 불러오기 실패:", error.message);
+      }
+    };
+
+    fetchBookmarkedTopics();
+  }, []);
+
+  const handleBookmark = async (topicId) => {
+    if (bookmarkedTopics.includes(topicId)) {
+      // 이미 즐겨찾기 되어 있으면 삭제 호출
+      const success = await deleteBookmark(topicId);
+      if (success) {
+        setBookmarkedTopics((prev) => prev.filter((id) => id !== topicId));
+        // setBookmarkedTopics((prev) =>
+        //   prev.filter((id) => id.toString() !== topicId.toString())
+        // );
+      }
+    } else {
+      // 즐겨찾기 추가
+      console.log("전달된 topicId:", topicId);
+      try {
+        const accessToken = await getToken();
+        if (!accessToken) {
+          Alert.alert("오류", "로그인이 필요합니다.");
+          return;
+        }
+        const response = await axios.post(
+          `${API_URL}/review/save`,
+          { lessonId: topicId },
+          {
+            withCredentials: true,
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        console.log(response.data.message);
+        Alert.alert("알림", response.data.message);
+
+        setBookmarkedTopics((prev) => {
+          if (prev.includes(topicId)) {
+            return prev.filter((id) => id !== topicId);
+          } else {
+            return [...prev, topicId];
+          }
+        });
+      } catch (error) {
+        console.log(error.message);
+        Alert.alert("오류", "즐겨찾기 추가에 실패했습니다.");
+      }
     }
+    console.log("북마크 토픽:", bookmarkedTopics);
+    console.log("삭제 시도 topicId:", topicId);
+    console.log("현재 북마크 상태:", bookmarkedTopics);
+    console.log("클릭한 lesson_id:", topic.lesson_id);
   };
 
   const levelColors = {
@@ -149,6 +200,39 @@ export default function LessonDetail() {
     },
     [topics, progress]
   );
+
+  // 즐찾 삭제
+  const deleteBookmark = async (topicId) => {
+    try {
+      const accessToken = await getToken();
+      if (!accessToken) {
+        Alert.alert("오류", "로그인이 필요합니다.");
+        return false;
+      }
+
+      const response = await axios.delete(
+        `${API_URL}/review/delete/${topicId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      Alert.alert("알림", response.data.message);
+      return true;
+    } catch (error) {
+      console.log(
+        "즐겨찾기 삭제 실패:",
+        error.response?.data?.message || error.message
+      );
+      Alert.alert(
+        "오류",
+        error.response?.data?.message || "즐겨찾기 삭제에 실패했습니다."
+      );
+      return false;
+    }
+  };
 
   const renderCategoryButtons = () => (
     <View style={styles.categoryContainer}>

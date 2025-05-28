@@ -7,6 +7,7 @@ import React, { useState, useEffect } from "react";
 import classData from "../../../utils/ClassData";
 import axios from "axios";
 import { API_URL } from "../../../config";
+import { getToken } from "../../../authStorage";
 
 const SignReview = () => {
   const [selectedLevel, setSelectedLevel] = useState("초급");
@@ -15,9 +16,15 @@ const SignReview = () => {
   useEffect(() => {
     const fetchSavedSigns = async () => {
       try {
+        const accessToken = await getToken(); // 토큰 비동기로 받아오기
+        if (!accessToken) {
+          console.log("토큰이 없습니다");
+          return;
+        }
+
         const response = await axios.get(`${API_URL}/review/lessons`, {
           headers: {
-            Authorization: accessToken, // 필요 시 토큰 변수 설정
+            Authorization: `Bearer ${accessToken}`, // 토큰 넣기
           },
         });
         setSavedSigns(response.data);
