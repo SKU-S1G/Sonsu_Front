@@ -27,7 +27,18 @@ const MyPage = () => {
   const handleLogout = () => {
     Alert.alert("로그아웃", "정말 로그아웃 하시겠습니까?", [
       { text: "취소", style: "cancel" },
-      { text: "확인", onPress: () => console.log("로그아웃 처리(해야댐)") },
+      {
+        text: "확인",
+        onPress: async () => {
+          try {
+            await axios.post(`${API_URL}/logout`);
+            console.log("로그아웃 성공");
+            navigation.navigate("Login");
+          } catch (error) {
+            console.log("로그아웃 중 오류 발생:", error);
+          }
+        },
+      },
     ]);
   };
 

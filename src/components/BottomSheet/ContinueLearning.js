@@ -78,7 +78,7 @@ const ContinueLearning = () => {
           {/* 제목 */}
           <View>
             <Text style={styles.partTitle}>
-              {nextLesson.lessonCategory_id}. {nextLesson.word}
+              Part {nextLesson.lessonCategory_id}. {nextLesson.word}
             </Text>
             <Text style={styles.levelText}>{currentLevel}</Text>
           </View>
