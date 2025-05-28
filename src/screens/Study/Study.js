@@ -17,14 +17,16 @@ export default function Study() {
   const route = useRoute();
   const { topic, lesson, index } = route.params;
   const navigation = useNavigation();
-  const [animation, setAnimation] = useState(null);
+  const [animation, setAnimation] = useState("");
+
+  console.log("레슨아이디", lesson.animation_path);
 
   const fetchTopic = async () => {
     try {
       const response = await axios.get(
         `${API_URL}/lessons/${lesson.id}/topics`
       );
-      // console.log(response.data);
+      console.log("토픽 데이터", response.data);
       const topicData = response.data.find((t) => t.word === topic.word);
       if (topicData) {
         const animationPath = topicData.animation_path;
@@ -36,6 +38,8 @@ export default function Study() {
       console.log("애니메이션 불러오기 실패:", error.message);
     }
   };
+
+  console.log("비디오 여기", animation);
 
   const startLesson = async () => {
     try {
@@ -74,19 +78,19 @@ export default function Study() {
         onPress={() => navigation.goBack()}
       >
         <View style={styles.screenContainer}>
-          <Text style={styles.title}>{`Step ${index + 1}. ${topic.word}`}</Text>
-          {/* topic 객체라 topic => topic.word 수정 */}
+          <Text style={styles.title}>{`Step ${topic.lesson_id}. ${topic.word}`}</Text>
         </View>
       </TouchableOpacity>
 
-      {animation && (
+      {lesson && (
         <Video
-          source={{ uri: animation }}  // 애니메이션 비디오 URL
-          resizeMode="contain"          // 비디오 크기 조정
-          isLooping                    // 비디오 반복
-          shouldPlay                   // 비디오 자동 재생
-          style={styles.video}
-        />
+        source={{ uri: lesson.animation_path }}
+        resizeMode="contain"
+        isLooping
+        style={styles.video}
+        useNativeControls={true}
+        shouldPlay={true}  // 이건 OK, 필요에 따라 제거 가능
+      />      
       )}
 
       <View style={styles.desContainer}>

@@ -15,17 +15,12 @@ import Feather from "@expo/vector-icons/Feather";
 import axios from "axios";
 import { API_URL } from "../../../config";
 import { io } from "socket.io-client";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 export default function Classroom() {
   const [selectedLevel, setSelectedLevel] = useState("초급");
   const [progress, setProgress] = useState([]);
   const [topics, setTopics] = useState([]);
   const [nextLesson, setNextLesson] = useState("");
-  const [isBookmarked, setIsBookmarked] = useState(false); // 북마크
-  const [bookmarkedLessons, setBookmarkedLessons] = useState([]); // 북마크된 lesson id 목록
-
-  const handleBookmark = async (lessonId) => {};
 
   const navigation = useNavigation();
 
@@ -143,7 +138,13 @@ export default function Classroom() {
   const [lessons, setLessons] = useState([]);
   const levels = { 초급: 1, 중급: 2, 고급: 3 };
 
-  const currentProgress = progress.length > 0 ? Math.max(...progress) : 0;
+  const currentProgress = Array.isArray(progress)
+  ? progress.filter((id) =>
+      lessons.some((lesson) => lesson.id === id)
+    ).length
+  : 0;
+
+  // const isLocked = lesson.partNumber > currentProgress + 1;
 
   const fetchCategories = async (level) => {
     try {
@@ -236,7 +237,10 @@ export default function Classroom() {
               numberOfLines={1} // 이 설정은 텍스트가 한 줄로 표시되도록 합니다.
               ellipsizeMode="tail" // 텍스트가 길어지면 끝부분을 잘라서 '...'로 표시합니다.
             >
-              Part {nextLesson.lessonCategory_id}. {nextLesson.word}
+              {/* Part {nextLesson.lessonCategory_id}. {nextLesson.word} */}
+              {nextLesson
+              ? `Part ${nextLesson.lessonCategory_id}. ${nextLesson.word}`
+              : "다음 강의 정보를 불러오는 중..."}
             </Text>
             <Text style={styles.sub}>이어서 학습하러 가기</Text>
           </View>
