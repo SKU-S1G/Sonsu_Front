@@ -1,5 +1,12 @@
 import React from "react";
-import { ScrollView, View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  ScrollView,
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Header from "../../components/Header";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -7,8 +14,8 @@ import ReviewComponent from "../../components/ReviewComponent";
 import tailwind from "tailwind-rn";
 
 export default function Review() {
-    const navigation = useNavigation();
-  
+  const navigation = useNavigation();
+
   return (
     <ScrollView style={[tailwind("flex-1"), { backgroundColor: "#f5f5f5" }]}>
       <Header color="#FFE694" />
@@ -21,51 +28,117 @@ export default function Review() {
       </View>
 
       {/* 스피드 게임 */}
-      <TouchableOpacity 
-        style={[tailwind("flex-row justify-between items-center bg-red-300 mt-5 mb-5"), styles.gameBox,]}
+      <TouchableOpacity
+        style={[
+          tailwind("flex-row justify-center items-center bg-red-300 mt-5 mb-5"),
+          styles.gameBox,
+        ]}
         onPress={() => navigation.navigate("SpeedInfo")}
-        >
+      >
         <View style={styles.imageContainer}>
-          <Image source={require("../../../assets/images/sonsuModel.png")} style={styles.imageSmall}/>
+          <Image
+            source={require("../../../assets/images/sonsuModel.png")}
+            style={styles.imageSmall}
+          />
         </View>
 
         <View style={styles.textContainer}>
-          <Image source={require("../../../assets/images/SpeedGame.png")} style={styles.imageTitle}/>
+          <Image
+            source={require("../../../assets/images/SpeedGame.png")}
+            style={styles.imageTitle}
+          />
 
-          <Text style={[tailwind("text-center text-md mt-2"), { color: "#2d3748" }]}>
+          <Text
+            style={[
+              tailwind("text-center mt-2"),
+              { color: "#2d3748", fontSize: 11 },
+            ]}
+          >
             실시간 게임으로 빠르게 수어 복습!
           </Text>
         </View>
       </TouchableOpacity>
 
       {/* OX 퀴즈 */}
-      <TouchableOpacity 
-        style={[tailwind("flex-row justify-between items-center bg-blue-200 mb-5"), styles.gameBox, styles.shadowReverse,]}
+      <TouchableOpacity
+        style={[
+          tailwind("flex-row justify-center items-center bg-blue-200"),
+          styles.gameBox,
+          styles.shadowReverse,
+        ]}
         onPress={() => navigation.navigate("OXInfo")}
-        >
+      >
         <View style={styles.textContainer}>
-          <Image source={require("../../../assets/images/OXQuiz.png")} style={styles.imageTitle}/>
-          
-          <Text style={[tailwind("text-center text-md mt-2"), { color: "#2d3748" }]}>
+          <Image
+            source={require("../../../assets/images/OXQuiz.png")}
+            style={styles.imageTitle}
+          />
+
+          <Text
+            style={[
+              tailwind("text-center mt-2"),
+              { color: "#2d3748", fontSize: 11 },
+            ]}
+          >
             간단하고 재미있게 수어 복습!
           </Text>
         </View>
 
         <View style={styles.imageContainer}>
-          <Image source={require("../../../assets/images/sonsuModel.png")} style={styles.imageSmall}/>
+          <Image
+            source={require("../../../assets/images/sonsuModel.png")}
+            style={styles.imageSmall}
+          />
+        </View>
+      </TouchableOpacity>
+
+      {/* 노래 수어 */}
+      <TouchableOpacity
+        style={[
+          tailwind(
+            "flex-row justify-center items-center bg-yellow-200 mt-5 mb-10"
+          ),
+          styles.gameBox,
+        ]}
+        // onPress={() => navigation.navigate("SpeedInfo")}
+      >
+        <View style={styles.imageContainer}>
+          <Image
+            source={require("../../../assets/images/sonsuModel.png")}
+            style={styles.imageSmall}
+          />
+        </View>
+
+        <View style={styles.textContainer}>
+          <Image
+            source={require("../../../assets/images/LyricsQuiz.png")}
+            style={styles.imageTitle}
+          />
+
+          <Text
+            style={[
+              tailwind("text-center mt-2"),
+              { color: "#2d3748", fontSize: 11 },
+            ]}
+          >
+            실시간 게임으로 빠르게 수어 복습!
+          </Text>
         </View>
       </TouchableOpacity>
 
       {/* 오답 수어 다시보기 */}
-      <View style={tailwind("flex-row justify-between items-center mt-2 mb-2 mx-10")}>
-        
+      <View
+        style={tailwind(
+          "flex-row justify-between items-center mt-2 mb-2 mx-10"
+        )}
+      >
         <Text style={tailwind("text-xl font-semibold")}>
           오답 수어 다시보기
         </Text>
-        
+
         <AntDesign name="arrowright" size={24} color="black" />
       </View>
-      
+
       <View style={tailwind("text-xl font-semibold mr-6 ml-6")}>
         {/* 오답수어 컨텐츠 */}
         <ReviewComponent />
@@ -84,7 +157,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     shadowOffset: { width: 2, height: 5 },
     alignSelf: "center",
-    justifyContent: "space-around",
+    // justifyContent: "space-around",
   },
   shadowReverse: {
     shadowOffset: { width: -5, height: 2 },
@@ -98,7 +171,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   imageSmall: {
-    width: 100,
+    width: 90,
     height: 90,
     resizeMode: "contain",
   },

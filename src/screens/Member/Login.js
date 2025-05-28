@@ -11,6 +11,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { API_URL } from "../../../config";
+import { saveToken } from "../../../authStorage";
 
 const Login = () => {
   const navigation = useNavigation();
@@ -31,9 +32,13 @@ const Login = () => {
           withCredentials: true,
         }
       )
-      .then((response) => {
+      .then(async (response) => {
         if (response.status === 200) {
           console.log(response.data);
+
+          // 토큰 저장 (서버가 accessToken 키로 토큰을 줄 때)
+          await saveToken(response.data.accessToken);
+
           navigation.navigate("Main");
         }
       })
