@@ -44,7 +44,7 @@ export default function StudyOnly() {
           <View>
             <Text
               style={styles.title}
-            >{`Step ${topic.lesson_id}. ${topic.word}`}</Text>
+            >{`Step ${topic.step_number}. ${topic.word}`}</Text>
           </View>
         </View>
       </TouchableOpacity>
