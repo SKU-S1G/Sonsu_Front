@@ -19,7 +19,7 @@ export default function Study() {
   const navigation = useNavigation();
   const [animation, setAnimation] = useState("");
 
-  console.log("레슨아이디", lesson.animation_path);
+  console.log("레슨아이디", lesson);
 
   const fetchTopic = async () => {
     try {
@@ -78,7 +78,7 @@ export default function Study() {
         onPress={() => navigation.goBack()}
       >
         <View style={styles.screenContainer}>
-          <Text style={styles.title}>{`Step ${topic.lesson_id}. ${topic.word}`}</Text>
+          <Text style={styles.title}>{`Step ${topic.step_number}. ${topic.word}`}</Text>
         </View>
       </TouchableOpacity>
 
