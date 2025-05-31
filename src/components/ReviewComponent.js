@@ -9,7 +9,7 @@ export default function ReviewComponent() {
       style={[
         tailwind("flex-row bg-white mt-3 p-4 mb-8"),
         {
-          height: 260,
+          height: 200,
           borderRadius: 16,
           shadowColor: "#000",
           shadowOpacity: 0.25,
