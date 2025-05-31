@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import {
   StyleSheet,
   View,
@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import StudyBack from "../../components/StudyBack";
 import Feather from "@expo/vector-icons/Feather";
 import axios from "axios";
@@ -24,29 +24,32 @@ export default function Classroom() {
 
   const navigation = useNavigation();
 
-  useEffect(() => {
-    const fetchProgress = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/progress/continue`, {
-          withCredentials: true,
-        });
-        console.log(response.data.nextLesson);
-        setNextLesson(response.data.nextLesson[0]);
-      } catch (error) {
-        console.error("Progress 불러오기 실패:", error);
-      }
-    };
-    fetchProgress();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const fetchProgress = async () => {
+        try {
+          const response = await axios.get(`${API_URL}/progress/continue`, {
+            withCredentials: true,
+          });
+          console.log(response.data.nextLesson);
+          setNextLesson(response.data.nextLesson[0]);
+        } catch (error) {
+          console.error("Progress 불러오기 실패:", error);
+        }
+      };
+  
+      fetchProgress();
+    }, [])
+  );
 
-  useEffect(() => {
-    const socketInstance = io(`${API_URL}`, {
-      path: "/ws",
-      transports: ["websocket"],
-      withCredentials: true,
-    });
+  useFocusEffect(
+    useCallback(() => {
+      const socketInstance = io(`${API_URL}`, {
+        path: "/ws",
+        transports: ["websocket"],
+        withCredentials: true,
+      });
 
-    socketInstance.on("connect", () => {
       const fetchCompletedCategories = async () => {
         try {
           const response = await axios.post(
@@ -55,22 +58,28 @@ export default function Classroom() {
             { withCredentials: true }
           );
           setProgress(response.data);
-          // console.log("완료된 카테고리:", response.data);
         } catch (error) {
           console.error("완료된 카테고리 불러오기 실패:", error);
         }
       };
-      fetchCompletedCategories();
-    });
 
-    socketInstance.on("categoryUpdated", (data) => {
-      setProgress(data);
-    });
+      socketInstance.on("connect", fetchCompletedCategories);
 
-    return () => {
-      socketInstance.disconnect();
-    };
-  }, []);
+      socketInstance.on("categoryUpdated", (data) => {
+        setProgress(data);
+      });
+
+      return () => {
+        socketInstance.disconnect();
+      };
+    }, [])
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchCategories(selectedLevel);
+    }, [selectedLevel])
+  );
 
   const levelColors = {
     초급: "#39B360",
@@ -169,9 +178,12 @@ export default function Classroom() {
       Alert.alert("오류", "강의 데이터를 불러오는 데 실패했습니다.");
     }
   };
-  useEffect(() => {
-    fetchCategories(selectedLevel); // selectedLevel이 변경될 때마다 호출
-  }, [selectedLevel]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchCategories(selectedLevel);
+    }, [selectedLevel])
+  );
 
   return (
     <SafeAreaView style={styles.container}>
