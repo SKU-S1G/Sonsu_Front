@@ -2,25 +2,23 @@ import React from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import tailwind from "tailwind-rn";
+import { Video } from "expo-av";
 
 export default function Card({ lesson, currentProgress, onPress }) {
-  const lessonLocked = lesson.id > currentProgress.lessonId;
-
   return (
     <View>
-      <View
-        style={styles.contentContainer}
-        onPress={onPress}
-        disabled={lessonLocked}
-      >
+      <View style={styles.contentContainer} onPress={onPress}>
         <View style={styles.card}>
-          {lessonLocked && (
-            <View style={styles.lockOverlay}>
-              <MaterialCommunityIcons name="lock" size={30} color="#fff" />
-            </View>
-          )}
           <View style={styles.imageContainer}>
-            <Image source={lesson.animationPath} style={styles.image} />
+            <Video
+              style={styles.image}
+              source={{ uri: lesson.animation_path }}
+              resizeMode="contain"
+              useNativeControls={false}
+              shouldPlay={true}
+              isMuted={true}
+              isLooping={true}
+            />
           </View>
         </View>
 
@@ -36,12 +34,14 @@ export default function Card({ lesson, currentProgress, onPress }) {
           {
             backgroundColor: "#FFE694",
             paddingHorizontal: 6,
+            width: 100,
             paddingVertical: 5,
             borderRadius: 15,
+            alignSelf: "center",
           },
         ]}
       >
-        <Text style={{fontSize: 15}}>다시 학습하기</Text>
+        <Text style={{ fontSize: 12 }}>다시 학습하기</Text>
       </View>
     </View>
   );
@@ -49,42 +49,26 @@ export default function Card({ lesson, currentProgress, onPress }) {
 
 const styles = StyleSheet.create({
   contentContainer: {
-    flexDirection: "column",
+    marginHorizontal: 4,
   },
   card: {
-    minHeight: "fit-content",
-    paddingVertical: 14,
     marginBottom: 5,
     borderRadius: 10,
-    backgroundColor: "#f9f9f9",
     alignItems: "center",
-    justifyContent: "center",
-  },
-  lockOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 10,
-    zIndex: 1,
   },
   imageContainer: {
     // width: 80,
   },
   image: {
-    width: 90,
-    height: 90,
+    width: 150,
+    height: 84,
     resizeMode: "contain",
   },
   textContainer: {
     justifyContent: "center",
     alignItems: "center",
     marginLeft: 10,
-    marginBottom: 8,
+    marginBottom: 4,
     paddingVertical: 5,
     width: 115,
   },
@@ -93,5 +77,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     flexShrink: 1,
+    marginTop: 4,
   },
 });

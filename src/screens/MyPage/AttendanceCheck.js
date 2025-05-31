@@ -277,7 +277,7 @@ const AttendanceCheck = () => {
               <Text style={{ fontSize: 27, fontWeight: "bold" }}>
                 {attendancePercentage.toFixed(1)}%
               </Text>
-              <Text style={{ fontSize: 14, marginTop: 8 }}>
+              <Text style={{ fontSize: 13, marginTop: 8 }}>
                 100%를 향한 도전, 함께 달려보아요!
               </Text>
             </View>

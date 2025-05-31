@@ -22,6 +22,8 @@ import SpeedGame from "./src/screens/Speed/SpeedGame";
 import OXInfo from "./src/screens/OXGame/OXInfo";
 import OXGame from "./src/screens/OXGame/OXGame";
 import GameResult from "./src/components/GameResult";
+import ReviewIncorrectSigns from "./src/screens/Review/ReviewIncorrectSigns";
+import ReviewIncorrectSignsDetail from "./src/screens/Review/ReviewIncorrectSignsDetail";
 
 const Stack = createStackNavigator();
 
@@ -48,6 +50,14 @@ export default function App() {
           <Stack.Screen name="OXInfo" component={OXInfo} />
           <Stack.Screen name="OXGame" component={OXGame} />
           <Stack.Screen name="GameResult" component={GameResult} />
+          <Stack.Screen
+            name="ReviewIncorrectSigns"
+            component={ReviewIncorrectSigns}
+          />
+          <Stack.Screen
+            name="ReviewIncorrectSignsDetail"
+            component={ReviewIncorrectSignsDetail}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>

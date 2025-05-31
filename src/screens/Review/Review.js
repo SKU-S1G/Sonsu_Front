@@ -136,7 +136,11 @@ export default function Review() {
           오답 수어 다시보기
         </Text>
 
-        <AntDesign name="arrowright" size={24} color="black" />
+        <TouchableOpacity
+          onPress={() => navigation.navigate("ReviewIncorrectSigns")}
+        >
+          <AntDesign name="arrowright" size={24} color="black" />
+        </TouchableOpacity>
       </View>
 
       <View style={tailwind("text-xl font-semibold mr-6 ml-6")}>

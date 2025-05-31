@@ -11,7 +11,7 @@ import { getToken } from "../../../authStorage";
 import { Video } from "expo-av";
 import { ScrollView } from "react-native-gesture-handler";
 import { Alert } from "react-native";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 const SignReview = () => {
   const [selectedLevel, setSelectedLevel] = useState("초급");
@@ -20,7 +20,7 @@ const SignReview = () => {
   useEffect(() => {
     const fetchSavedSigns = async () => {
       try {
-        const accessToken = await getToken(); // 토큰 비동기로 받아오기
+        const accessToken = await getToken();
         if (!accessToken) {
           console.log("토큰이 없습니다");
           return;
@@ -28,7 +28,7 @@ const SignReview = () => {
 
         const response = await axios.get(`${API_URL}/review/lessons`, {
           headers: {
-            Authorization: `Bearer ${accessToken}`, // 토큰 넣기
+            Authorization: `Bearer ${accessToken}`,
           },
         });
 
@@ -267,11 +267,11 @@ const SignReview = () => {
                     }}
                     onPress={() => handleBookmark(item.lesson_id)}
                   >
-                    <FontAwesome
+                    <AntDesign
                       name={
                         bookmarkedTopics.includes(item.lesson_id)
-                          ? "bookmark"
-                          : "bookmark-o"
+                          ? "star"
+                          : "staro"
                       }
                       size={30}
                       color="#FFCA1A"
