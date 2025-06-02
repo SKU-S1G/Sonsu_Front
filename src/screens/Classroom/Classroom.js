@@ -37,7 +37,7 @@ export default function Classroom() {
           console.error("Progress 불러오기 실패:", error);
         }
       };
-
+  
       fetchProgress();
     }, [])
   );
@@ -148,8 +148,10 @@ export default function Classroom() {
   const levels = { 초급: 1, 중급: 2, 고급: 3 };
 
   const currentProgress = Array.isArray(progress)
-    ? progress.filter((id) => lessons.some((lesson) => lesson.id === id)).length
-    : 0;
+  ? progress.filter((id) =>
+      lessons.some((lesson) => lesson.id === id)
+    ).length
+  : 0;
 
   // const isLocked = lesson.partNumber > currentProgress + 1;
 
@@ -249,8 +251,8 @@ export default function Classroom() {
             >
               {/* Part {nextLesson.lessonCategory_id}. {nextLesson.word} */}
               {nextLesson
-                ? `Step ${nextLesson.step_number}. ${nextLesson.word}`
-                : "다음 강의 정보를 불러오는 중..."}
+              ? `Step ${nextLesson.step_number}. ${nextLesson.word}`
+              : "다음 강의 정보를 불러오는 중..."}
             </Text>
             <Text style={styles.sub}>이어서 학습하러 가기</Text>
           </View>
