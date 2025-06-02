@@ -1,9 +1,4 @@
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -78,19 +73,21 @@ export default function Study() {
         onPress={() => navigation.goBack()}
       >
         <View style={styles.screenContainer}>
-          <Text style={styles.title}>{`Step ${topic.step_number}. ${topic.word}`}</Text>
+          <Text
+            style={styles.title}
+          >{`Step ${topic.step_number}. ${topic.word}`}</Text>
         </View>
       </TouchableOpacity>
 
-      {lesson && (
+      {topic && (
         <Video
-        source={{ uri: lesson.animation_path }}
-        resizeMode="contain"
-        isLooping
-        style={styles.video}
-        useNativeControls={true}
-        shouldPlay={true}  // 이건 OK, 필요에 따라 제거 가능
-      />      
+          source={{ uri: topic.animation_path }}
+          resizeMode="contain"
+          isLooping
+          style={styles.video}
+          useNativeControls={true}
+          shouldPlay={true} // 이건 OK, 필요에 따라 제거 가능
+        />
       )}
 
       <View style={styles.desContainer}>

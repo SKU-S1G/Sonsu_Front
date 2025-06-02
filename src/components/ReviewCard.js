@@ -5,10 +5,12 @@ import classData from "../../utils/ClassData";
 import axios from "axios";
 import { API_URL } from "../../config";
 import { getToken } from "../../authStorage";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ReviewCard() {
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchWrongAnswers = async () => {
@@ -49,8 +51,21 @@ export default function ReviewCard() {
               title: lesson.word,
               animation_path: lesson.animation_path,
             }}
-            currentProgress={{ lessonId: 10 }}
-            onPress={() => {}}
+            // onPress={() =>
+            //   navigation.navigate("Study", { topic: lesson, lesson })
+            // }
+            onPress={() =>
+              navigation.navigate("Study", {
+                topic: {
+                  word: lesson.word,
+                  lesson_id: lesson.lesson_id,
+                  animation_path: lesson.animation_path,
+                  step_number: index + 1, // 예시로 인덱스를 넘김
+                },
+                lesson,
+                index,
+              })
+            }
           />
         ))}
       </View>

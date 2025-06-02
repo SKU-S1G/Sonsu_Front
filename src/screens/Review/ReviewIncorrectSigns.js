@@ -124,6 +124,9 @@ const ReviewIncorrectSigns = () => {
     });
   };
 
+  const now = new Date();
+  const currentMonth = now.getMonth() + 1; // 0부터 시작하니까 +1
+
   return (
     <View>
       <Header />
@@ -139,9 +142,11 @@ const ReviewIncorrectSigns = () => {
               style={styles.weekButton}
               onPress={() => goToWeekDetail(week)}
             >
-              <Text style={styles.weekButtonText}>{week}주차</Text>
-              <Text style={styles.previewText}>{renderPreviewWords(week)}</Text>
+              <Text
+                style={styles.weekButtonText}
+              >{`${currentMonth}월 ${week}주차`}</Text>
 
+              <Text style={styles.previewText}>{renderPreviewWords(week)}</Text>
               <View style={styles.previewVideoContainer}>
                 {getPreviewVideos(week).length > 0 ? (
                   getPreviewVideos(week).map((uri, i) => (
@@ -212,7 +217,7 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   previewText: {
-    marginTop: 6,
+    // marginTop: 6,
     fontSize: 12,
     color: "#666",
     textAlign: "center",

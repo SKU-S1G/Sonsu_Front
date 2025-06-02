@@ -157,7 +157,11 @@ const MyPage = () => {
           style={tailwind("flex-row justify-between items-center mt-12 mb-2 ")}
         >
           <Text style={tailwind("text-lg font-bold")}>오답 수어 다시보기</Text>
-          <AntDesign name="arrowright" size={24} color="black" />
+          <TouchableOpacity
+            onPress={() => navigation.navigate("ReviewIncorrectSigns")}
+          >
+            <AntDesign name="arrowright" size={24} color="black" />
+          </TouchableOpacity>
         </View>
 
         {/* 오답수어 컨텐츠 */}
