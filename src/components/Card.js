@@ -28,7 +28,8 @@ export default function Card({ lesson, currentProgress, onPress }) {
           </Text>
         </View>
       </View>
-      <View
+      <TouchableOpacity
+        onPress={onPress}
         style={[
           tailwind("items-center text-center"),
           {
@@ -38,11 +39,12 @@ export default function Card({ lesson, currentProgress, onPress }) {
             paddingVertical: 5,
             borderRadius: 15,
             alignSelf: "center",
+            marginTop: 4,
           },
         ]}
       >
         <Text style={{ fontSize: 12 }}>다시 학습하기</Text>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 }

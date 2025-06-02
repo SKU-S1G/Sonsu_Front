@@ -1,11 +1,11 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import React, { useState, useEffect } from "react";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import ShortcutButton from "../ShortcutButton";
 import axios from "axios";
 import { API_URL } from "../../../config";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
+import { Video } from "expo-av";
 
 const ProgressBar = ({ progress }) => {
   return (
@@ -61,16 +61,27 @@ const ContinueLearning = () => {
       <View style={styles.content}>
         {/* 왼쪽 (이미지) */}
         <View style={styles.imageContainer}>
-          <AntDesign
+          {/* <AntDesign
             name="playcircleo"
             size={38}
             color="black"
             style={styles.play}
-          />
-          <Image
-            style={styles.image}
-            source={require("../../../assets/images/sonsuModel.png")}
-          />
+          /> */}
+          {nextLesson.animation_path ? (
+            <Video
+              source={{ uri: nextLesson.animation_path }}
+              style={styles.image} // Image 스타일 재활용 가능
+              resizeMode="cover"
+              shouldPlay
+              isLooping
+              isMuted
+            />
+          ) : (
+            <Image
+              style={styles.image}
+              source={require("../../../assets/images/sonsuModel.png")}
+            />
+          )}
         </View>
 
         {/* 오른쪽 (정보 + 진도율) */}
@@ -129,9 +140,10 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   image: {
-    width: 86,
-    height: 135,
+    width: 128,
+    height: 174,
     resizeMode: "contain",
+    borderRadius: 20,
   },
   infoContainer: {
     flex: 1,

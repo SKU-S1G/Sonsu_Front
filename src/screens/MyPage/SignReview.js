@@ -42,11 +42,21 @@ const SignReview = () => {
     fetchSavedSigns();
   }, []);
 
+  // const filteredSigns = savedSigns.filter((item) => {
+  //   const lesson = classData[selectedLevel]?.find((lesson) =>
+  //     lesson.topics.includes(item.word)
+  //   );
+  //   return !!lesson;
+  // });
   const filteredSigns = savedSigns.filter((item) => {
-    const lesson = classData[selectedLevel]?.find((lesson) =>
-      lesson.topics.includes(item.word)
-    );
-    return !!lesson;
+    if (selectedLevel === "초급") {
+      return item.lesson_id <= 32;
+    } else if (selectedLevel === "중급") {
+      return item.lesson_id >= 33 && item.lesson_id <= 49;
+    } else if (selectedLevel === "고급") {
+      return item.lesson_id >= 50;
+    }
+    return false;
   });
 
   const navigation = useNavigation();
