@@ -82,9 +82,9 @@ export default function Study() {
         </View>
       </TouchableOpacity>
 
-      {lesson && (
+      {topic && (
         <Video
-        source={{ uri: lesson.animation_path }}
+        source={{ uri: topic.animation_path }}
         resizeMode="contain"
         isLooping
         style={styles.video}
