@@ -100,7 +100,7 @@ export default function Review() {
           ),
           styles.gameBox,
         ]}
-        // onPress={() => navigation.navigate("SpeedInfo")}
+        onPress={() => navigation.navigate("LyricsInfo")}
       >
         <View style={styles.imageContainer}>
           <Image
