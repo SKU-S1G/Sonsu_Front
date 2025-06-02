@@ -24,6 +24,7 @@ import OXGame from "./src/screens/OXGame/OXGame";
 import GameResult from "./src/components/GameResult";
 import ReviewIncorrectSigns from "./src/screens/Review/ReviewIncorrectSigns";
 import ReviewIncorrectSignsDetail from "./src/screens/Review/ReviewIncorrectSignsDetail";
+import LyricsInfo from "./src/screens/GuessTheLyrics/LyricsInfo";
 
 const Stack = createStackNavigator();
 
@@ -58,6 +59,7 @@ export default function App() {
             name="ReviewIncorrectSignsDetail"
             component={ReviewIncorrectSignsDetail}
           />
+          <Stack.Screen name="LyricsInfo" component={LyricsInfo} />
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>

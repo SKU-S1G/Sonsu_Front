@@ -275,7 +275,7 @@ export default function LessonDetail() {
       <Header color="#fff" />
       <View style={styles.backButton}>
         <Text style={styles.Title}>
-          {"Part"} {lesson.id}. {lesson.title}
+          {"Part"} {lesson.partNumber}. {lesson.title}
         </Text>
       </View>
 
