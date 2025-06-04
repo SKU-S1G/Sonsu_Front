@@ -90,18 +90,18 @@ export default function Classroom() {
   const renderCategoryButtons = () => {
     const levels = ["초급", "중급", "고급"];
     const levelOrder = {
-      "초급": 0,
-      "중급": 1,
-      "고급": 2,
+      초급: 0,
+      중급: 1,
+      고급: 2,
     };
-  
+
     const nextLevelIndex = levelOrder[nextLesson.level]; // API로 받아온 레벨 기준
-  
+
     return (
       <View style={styles.categoryContainer}>
         {levels.map((level) => {
           const isButtonLocked = levelOrder[level] > nextLevelIndex;
-  
+
           return (
             <TouchableOpacity
               key={level}
@@ -144,7 +144,6 @@ export default function Classroom() {
       </View>
     );
   };
-  
 
   const [lessons, setLessons] = useState([]);
   const levels = { 초급: 1, 중급: 2, 고급: 3 };
@@ -402,7 +401,6 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flexGrow: 1,
-    // flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-around",
     padding: 18,

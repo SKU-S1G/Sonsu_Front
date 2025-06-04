@@ -30,6 +30,7 @@ const WeeklyRanking = () => {
           nickname: "@@@",
           progress: currentUser.week_points,
         };
+        console.log(currentUser);
 
         // 현재 유저가 top3에 포함되어 있는지 체크
         const isUserInTop3 = top3.some((u) => u.name === currentUser.username);
