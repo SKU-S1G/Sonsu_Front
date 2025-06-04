@@ -87,62 +87,64 @@ export default function Classroom() {
     고급: "#FF9381",
   };
 
-  const renderCategoryButtons = () => (
-    <View style={styles.categoryContainer}>
-      {["초급", "중급", "고급"].map((level, index) => {
-        // index: 0 = 초급, 1 = 중급, 2 = 고급
-        // currentProgress가 5라면, 초급(1단계)은 완료된 상태
-        // 중급은 currentProgress >= 6 이상일 때 열리게 설정
-        const levelOrder = index + 1;
-        const isLocked = currentProgress < (levelOrder - 1) * 5; // 예시 기준 (레벨당 5개 있다고 가정)
-
-        return (
-          <TouchableOpacity
-            key={level}
-            style={[
-              styles.categoryButton,
-              selectedLevel === level && styles.selectedCategory,
-              isLocked && { opacity: 0.4 }, // 잠겨있을 경우 흐리게 표시
-            ]}
-            onPress={() => {
-              if (!isLocked) {
-                setSelectedLevel(level);
-                fetchCategories(level);
-              } else {
-                alert("이 레벨은 아직 잠겨있습니다.");
-              }
-            }}
-            disabled={isLocked}
-          >
-            <View style={styles.textWrapper}>
-              <Text
-                style={[
-                  styles.categoryText,
-                  selectedLevel === level && styles.selectedCategoryText,
-                ]}
-              >
-                {level}
-              </Text>
-              {selectedLevel === level && (
-                <View
+  const renderCategoryButtons = () => {
+    const levels = ["초급", "중급", "고급"];
+    const levelOrder = {
+      "초급": 0,
+      "중급": 1,
+      "고급": 2,
+    };
+  
+    const nextLevelIndex = levelOrder[nextLesson.level]; // API로 받아온 레벨 기준
+  
+    return (
+      <View style={styles.categoryContainer}>
+        {levels.map((level) => {
+          const isButtonLocked = levelOrder[level] > nextLevelIndex;
+  
+          return (
+            <TouchableOpacity
+              key={level}
+              style={[
+                styles.categoryButton,
+                selectedLevel === level && styles.selectedCategory,
+                isButtonLocked && { opacity: 0.4 }, // 잠겨있을 경우 흐리게 표시
+              ]}
+              onPress={() => {
+                if (!isButtonLocked) {
+                  setSelectedLevel(level);
+                  fetchCategories(level);
+                } else {
+                  alert("이 레벨은 아직 잠겨있습니다.");
+                }
+              }}
+              disabled={isButtonLocked}
+            >
+              <View style={styles.textWrapper}>
+                <Text
                   style={[
-                    styles.indicator,
-                    { backgroundColor: levelColors[level] },
+                    styles.categoryText,
+                    selectedLevel === level && styles.selectedCategoryText,
                   ]}
-                />
-              )}
-            </View>
-          </TouchableOpacity>
-        );
-      })}
-      {/* <TouchableOpacity
-        style={styles.reviewButton}
-        onPress={() => navigation.navigate("Review")}
-      >
-        <Text style={styles.reviewButtonText}>Review</Text>
-      </TouchableOpacity> */}
-    </View>
-  );
+                >
+                  {level}
+                </Text>
+                {selectedLevel === level && (
+                  <View
+                    style={[
+                      styles.indicator,
+                      { backgroundColor: levelColors[level] },
+                    ]}
+                  />
+                )}
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    );
+  };
+  
 
   const [lessons, setLessons] = useState([]);
   const levels = { 초급: 1, 중급: 2, 고급: 3 };
