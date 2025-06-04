@@ -1,18 +1,48 @@
 import { Image, Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import InfoModal from "../../components/InfoModal";
+import axios from "axios";
 
-const userRank = [
-  { rank: 1, name: "김정이", nickname: "교수님", progress: 90 },
-  { rank: 2, name: "이호연", nickname: "성결대", progress: 76 },
-  { rank: 3, name: "최유정", nickname: "성결대", progress: 68 },
-  { rank: 24, name: "사용자", nickname: "@@@", progress: 43 },
-  // 다른 사용자 데이터를 추가
-];
+import { API_URL } from "../../../config";
 
 const WeeklyRanking = () => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [userRankData, setUserRankData] = useState([]);
+
+  useEffect(() => {
+    const fetchRanking = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/mypage/ranking`);
+        const data = response.data;
+
+        const top3 = data.slice(0, 3).map((user, index) => ({
+          rank: index + 1,
+          name: user.username,
+          nickname: "",
+          progress: user.week_points,
+        }));
+
+        const currentUser = data[data.length - 1];
+        const user = {
+          rank: data.length,
+          name: currentUser.username,
+          nickname: "@@@",
+          progress: currentUser.week_points,
+        };
+
+        // 현재 유저가 top3에 포함되어 있는지 체크
+        const isUserInTop3 = top3.some((u) => u.name === currentUser.username);
+
+        // 중복 방지 후 상태 설정
+        setUserRankData(isUserInTop3 ? top3 : [...top3, user]);
+      } catch (error) {
+        console.error("랭킹 데이터를 불러오는 데 실패했습니다:", error);
+      }
+    };
+
+    fetchRanking();
+  }, []);
 
   return (
     <View style={styles.rankContainer}>
@@ -28,7 +58,7 @@ const WeeklyRanking = () => {
           <Feather name="alert-circle" size={21} color="#666666" />
         </TouchableOpacity>
       </View>
-      {userRank.map((user, index) => (
+      {userRankData.map((user, index) => (
         <View key={index} style={styles.rankWrap}>
           <View
             style={{
@@ -61,7 +91,6 @@ const WeeklyRanking = () => {
               <View
                 style={[styles.progress, { width: `${user.progress}%` }]}
               ></View>
-              {/* 사용자의 진행도에 따라 바의 너비를 설정 */}
             </View>
           </View>
         </View>
