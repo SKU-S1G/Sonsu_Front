@@ -52,9 +52,11 @@ const ReviewIncorrectSigns = () => {
         const json = await res.json();
         console.log(json);
 
-        if (json.success) {
-          const grouped = groupByWeek(json.data);
+        if (json.success && Array.isArray(json.rows)) {
+          const grouped = groupByWeek(json.rows);
           setGroupedByWeek(grouped);
+        } else {
+          console.warn("오답 수어 데이터 형식이 올바르지 않습니다:", json);
         }
       } catch (err) {
         Alert.alert("에러", "오답 데이터를 불러오는 중 문제가 발생했습니다.");
