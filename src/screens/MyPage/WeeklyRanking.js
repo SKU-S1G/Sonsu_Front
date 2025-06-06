@@ -3,7 +3,6 @@ import Feather from "@expo/vector-icons/Feather";
 import { useEffect, useState } from "react";
 import InfoModal from "../../components/InfoModal";
 import axios from "axios";
-
 import { API_URL } from "../../../config";
 
 const WeeklyRanking = () => {
@@ -29,14 +28,20 @@ const WeeklyRanking = () => {
           name: currentUser.username,
           nickname: "@@@",
           progress: currentUser.week_points,
+          isCurrentUser: true,
         };
-        console.log(currentUser);
 
         // 현재 유저가 top3에 포함되어 있는지 체크
         const isUserInTop3 = top3.some((u) => u.name === currentUser.username);
 
-        // 중복 방지 후 상태 설정
-        setUserRankData(isUserInTop3 ? top3 : [...top3, user]);
+        if (isUserInTop3) {
+          const updatedTop3 = top3.map((u) =>
+            u.name === currentUser.username ? { ...u, isCurrentUser: true } : u
+          );
+          setUserRankData(updatedTop3);
+        } else {
+          setUserRankData([...top3, user]);
+        }
       } catch (error) {
         console.error("랭킹 데이터를 불러오는 데 실패했습니다:", error);
       }
@@ -60,7 +65,13 @@ const WeeklyRanking = () => {
         </TouchableOpacity>
       </View>
       {userRankData.map((user, index) => (
-        <View key={index} style={styles.rankWrap}>
+        <View
+          key={index}
+          style={[
+            styles.rankWrap,
+            user.isCurrentUser && styles.currentUserHighlight,
+          ]}
+        >
           <View
             style={{
               flexDirection: "row",
@@ -156,6 +167,12 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: "#FFCA1A", // 진행도를 나타내는 색상
     borderRadius: 5,
+  },
+  currentUserHighlight: {
+    // borderBottomColor: "#FFCF00",
+    // borderBottomWidth: 1,
+    // borderTopColor: "#FFCF00",
+    // borderTopWidth: 1,
   },
 });
 

@@ -7,10 +7,41 @@ import MaskedView from "@react-native-masked-view/masked-view";
 import Header from "../../components/Header";
 import SpeedBack from "../../components/SpeedBack";
 import { useNavigation } from "@react-navigation/native";
+import { Button } from "react-native-vector-icons/MaterialCommunityIcons";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function LyricsInfo() {
   const [fontsLoaded] = useFonts(customFonts);
   const navigation = useNavigation();
+
+  const lyricsData = [
+    {
+      level: "초급",
+      backgroundColor: "#C7DACD",
+      title: "💖사랑(LOVE)",
+      lyrics: [
+        "안녕하세요, 사랑합니다",
+        "괜찮아요, 너와 나",
+        "우리 함께, 사랑해요",
+      ],
+    },
+    {
+      level: "중급",
+      backgroundColor: "#CBD3DF",
+      title: "👪가족(FAMILY)",
+      lyrics: ["엄마 아빠 동생과", "우리 집은 웃음꽃", "너와 나, 가족이야"],
+    },
+    {
+      level: "고급",
+      backgroundColor: "#E9D0CC",
+      title: "⏰시간(TIME)",
+      lyrics: [
+        "어제, 오늘 그리고 내일",
+        "모레 또 그제까지",
+        "일 년, 한 달, 하루",
+      ],
+    },
+  ];
 
   if (!fontsLoaded) {
     return (
@@ -44,31 +75,30 @@ export default function LyricsInfo() {
           </MaskedView>
         </View>
 
-        <View style={styles.info}>
-          <Image
-            source={require("../../../assets/images/sonsuModel.png")}
-            style={styles.image}
-          />
-          <View style={styles.infoText}>
-            <Text style={{ fontSize: 18 }}>노래를 듣고,</Text>
-            <Text style={{ fontSize: 18 }}>수어 동작을 맞춰보세요!</Text>
-          </View>
-        </View>
-
-        <View style={styles.importantView}>
-          <Text style={styles.importantTitle}>🎧 게임 방법 🎵</Text>
-          <Text style={styles.importantText}>✅ 해당 수어가 정답이라면 O,</Text>
-          <Text style={styles.importantText2}>오답이라면 X를 누르세요</Text>
-          <Text style={styles.importantText}>✅ 해당 수어가 정답이라면 O,</Text>
-          <Text style={styles.importantText2}>오답이라면 X를 누르세요</Text>
-        </View>
-
-        <TouchableOpacity
-          style={styles.practiceButton}
-          onPress={() => navigation.navigate("OXGame")}
-        >
-          <Text style={styles.practiceButtonText}>시작하기</Text>
-        </TouchableOpacity>
+        <ScrollView>
+          {lyricsData.map((item, index) => (
+            <View
+              key={index}
+              style={[
+                styles.box1,
+                {
+                  backgroundColor: item.backgroundColor,
+                  marginBottom: index === lyricsData.length - 1 ? 30 : 0, // 마지막만 marginBottom
+                },
+              ]}
+            >
+              <Text style={styles.TitleText}>{item.title}</Text>
+              <View style={{ alignSelf: "center", marginVertical: 20 }}>
+                {item.lyrics.map((line, i) => (
+                  <Text key={i}>{line}</Text>
+                ))}
+              </View>
+              <TouchableOpacity style={styles.practiceButton}>
+                <Text style={styles.practiceButtonText}>시작하기</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </ScrollView>
       </View>
     </View>
   );
@@ -92,60 +122,25 @@ const styles = StyleSheet.create({
     color: "white",
     marginLeft: 30,
   },
-  info: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 50,
-  },
-  image: {
-    width: "30%",
-    height: 190,
-    resizeMode: "contain",
-    // marginTop: 50,
-    marginRight: 30,
-  },
-  infoText: {
-    marginBottom: 20,
-  },
-  importantView: {
-    backgroundColor: "#FFFFFF",
-    width: "70%",
-    height: "fit-content",
-    paddingVertical: 30,
-    paddingHorizontal: 25,
+  box1: {
+    marginTop: "8%",
+    backgroundColor: "#fff",
+    width: "80%",
+    alignSelf: "center",
+    padding: 20,
     borderRadius: 20,
-    alignSelf: "center",
-    marginTop: 50,
+    backgroundColor: "#C7DACD",
     shadowColor: "#000",
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    shadowOffset: { width: 2, height: 5 },
-  },
-  importantTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  importantText: {
-    fontSize: 16,
-    width: "90%",
-    alignSelf: "center",
-    marginTop: 20,
-  },
-  importantText2: {
-    fontSize: 16.5,
-    width: "90%",
-    alignSelf: "center",
-    marginLeft: 50,
+    shadowOffset: { width: 1, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 3,
   },
   practiceButton: {
     width: "63%",
-    marginTop: 50,
     alignSelf: "center",
-    backgroundColor: "#FFE694",
-    paddingVertical: 12,
-    paddingHorizontal: 30,
+    backgroundColor: "#F1F1F1",
+    paddingVertical: 8,
     borderRadius: 15,
     shadowColor: "#000",
     shadowOffset: { width: 1, height: 3 },
@@ -154,9 +149,13 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   practiceButtonText: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: "bold",
     color: "#333",
     textAlign: "center",
+  },
+  TitleText: {
+    fontSize: 20,
+    fontWeight: "500",
   },
 });
