@@ -19,10 +19,27 @@ export default function SpeedGame() {
   const [question, setQuestion] = useState('');
   // const [confidence, setConfidence] = useState(null);
   const navigation = useNavigation();
+  const [time, setTime] = useState(20);
 
   useEffect(() => {
     fetchQuestion();
   }, []);
+
+  useEffect(() => {
+    if (time === 0) {
+      // 시간이 0이 되면 다음 문제 불러오기
+      fetchQuestion();
+      setTime(20);  // 시간 초기화 (원하는 시간으로 조절 가능)
+      return;
+    }
+  
+    const timerId = setTimeout(() => {
+      setTime(prev => prev - 1);
+    }, 1000);
+  
+    return () => clearTimeout(timerId);
+  }, [time]);
+  
 
   // const fetchConfidence = async () => {
   //   try {
@@ -87,7 +104,7 @@ export default function SpeedGame() {
       <View style={styles.showContainer}>
         <View style={styles.timeView}>
           <Icon name="clock-time-four-outline" size={35} color="#000" />
-          <Text style={styles.timeText}>10</Text>
+          <Text style={styles.timeText}>{time}</Text>
         </View>
 
         <View style={styles.indexView}>
