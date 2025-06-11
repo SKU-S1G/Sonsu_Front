@@ -12,6 +12,7 @@
   "dependencies": {
     "@expo/vector-icons": "^14.0.4",
     "@gorhom/bottom-sheet": "^5.1.1",
+    "@react-native-async-storage/async-storage": "2.1.2",
     "@react-native-community/checkbox": "^0.5.17",
     "@react-native-masked-view/masked-view": "^0.3.2",
     "@react-navigation/native": "^7.0.14",
@@ -22,7 +23,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "expo-av": "^15.0.2",
-    "expo-camera": "^16.0.17",
+    "expo-camera": "^16.1.7",
     "expo-checkbox": "~4.1.4",
     "expo-constants": "~17.1.6",
     "expo-font": "^13.0.3",
@@ -55,8 +56,7 @@
     "react-native-webview": "^13.12.5",
     "socket.io-client": "^4.8.1",
     "tailwind-rn": "^2.0.0",
-    "victory-native": "^40.1.0",
-    "@react-native-async-storage/async-storage": "2.1.2"
+    "victory-native": "^40.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

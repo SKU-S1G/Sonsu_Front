@@ -16,7 +16,7 @@ export default function ReviewCard() {
     const fetchWrongAnswers = async () => {
       try {
         const response = await axios.get(`${API_URL}/quiz/wrong`);
-        const data = response.data.rows;
+        const data = response.data.data;
 
         // recorded_at 기준 내림차순 정렬
         const sortedData = data.sort(
