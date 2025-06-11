@@ -8,30 +8,36 @@ import { API_URL } from "../../../config";
 const WeeklyRanking = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [userRankData, setUserRankData] = useState([]);
-
+  
   useEffect(() => {
     const fetchRanking = async () => {
       try {
         const response = await axios.get(`${API_URL}/mypage/ranking`);
         const data = response.data;
 
+        console.log("유저데이터", data);
+
+        // 가장 높은 포인트
+        const maxPoints = Math.max(...data.map(user => user.week_points));
+
         const top3 = data.slice(0, 3).map((user, index) => ({
           rank: index + 1,
           name: user.username,
           nickname: "",
           progress: user.week_points,
+          progressRate: (user.week_points / maxPoints) * 100, // 비율 추가
         }));
 
         const currentUser = data[data.length - 1];
         const user = {
           rank: data.length,
           name: currentUser.username,
-          nickname: "@@@",
+          nickname: currentUser.username,
           progress: currentUser.week_points,
+          progressRate: (currentUser.week_points / maxPoints) * 100, // 비율 추가
           isCurrentUser: true,
         };
 
-        // 현재 유저가 top3에 포함되어 있는지 체크
         const isUserInTop3 = top3.some((u) => u.name === currentUser.username);
 
         if (isUserInTop3) {
@@ -97,11 +103,12 @@ const WeeklyRanking = () => {
               {user.name}
             </Text>
             <Text style={{ fontSize: 11 }}>{user.nickname}</Text>
+            <Text style={{ fontSize: 10 }}>{user.progress}점</Text>
           </View>
           <View style={styles.progressContainer}>
             <View style={styles.barBackground}>
               <View
-                style={[styles.progress, { width: `${user.progress}%` }]}
+                style={[styles.progress, { width: `${user.progressRate}%` }]} // 수정된 부분
               ></View>
             </View>
           </View>
