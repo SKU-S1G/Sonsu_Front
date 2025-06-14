@@ -10,6 +10,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { WebView } from "react-native-webview";
 import { serverIP } from "../../../config";
 import GameModal from '../../components/GameModal';
+
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
@@ -17,9 +18,10 @@ export default function SpeedGame() {
   const [fontsLoaded] = useFonts(customFonts);
   const [modalVisible, setModalVisible] = useState(false);
   const [question, setQuestion] = useState('');
-  // const [confidence, setConfidence] = useState(null);
-  const navigation = useNavigation();
+  const [gameResult, setGameResult] = useState('');
   const [time, setTime] = useState(20);
+  const [questionIndex, setQuestionIndex] = useState(1); // 문제 번호 관리
+  const navigation = useNavigation();
 
   useEffect(() => {
     fetchQuestion();
@@ -27,50 +29,62 @@ export default function SpeedGame() {
 
   useEffect(() => {
     if (time === 0) {
-      // 시간이 0이 되면 다음 문제 불러오기
-      fetchQuestion();
-      setTime(20);  // 시간 초기화 (원하는 시간으로 조절 가능)
+      if (questionIndex >= 5) {
+        setModalVisible(true); // 타임오버로도 게임 종료
+      } else {
+        fetchQuestion();
+        setTime(20);
+        setGameResult('');
+        setQuestionIndex(prev => prev + 1);
+      }
       return;
     }
-  
+
     const timerId = setTimeout(() => {
       setTime(prev => prev - 1);
     }, 1000);
-  
+
     return () => clearTimeout(timerId);
   }, [time]);
-  
 
-  // const fetchConfidence = async () => {
-  //   try {
-  //     const response = await axios.get(`${serverIP}/game1/get_confidence`);
-  //     setConfidence(response.data.confidence);
-  //   } catch (error) {
-  //     console.error('정확도 불러오기 오류:', error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     fetchConfidence();
-  //   }, 1000);
-  
-  //   return () => clearInterval(interval);
-  // }, []);
-  
   const fetchQuestion = async () => {
     try {
       const response = await axios.get(`${serverIP}/game1/get_question`);
       setQuestion(response.data.question);
+      setGameResult('');
     } catch (error) {
       console.error('단어를 불러오는 중 오류 발생:', error);
     }
   };
 
+  const fetchGameInfo = async () => {
+    try {
+      const response = await axios.get(`${serverIP}/game1/get_game_info`);
+      const { game_result } = response.data;
+
+      if (game_result && game_result !== gameResult) {
+        setGameResult(game_result);
+
+        if (game_result === "정답입니다!") {
+          setModalVisible(true); // 정답 팝업
+        }
+      }
+    } catch (error) {
+      console.error('게임 정보 가져오기 실패:', error);
+    }
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchGameInfo();
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [gameResult]);
+
   if (!fontsLoaded) {
     return <View><Text>Loading...</Text></View>;
   }
-  
+
   return (
     <View>
       <Header color="#FFFFFF" />
@@ -88,7 +102,7 @@ export default function SpeedGame() {
           >
             <LinearGradient
               colors={['#F26851', '#FFC0B6']}
-              start={{ x: 0, y: 0.8 }} 
+              start={{ x: 0, y: 0.8 }}
               end={{ x: 1, y: 0 }}
               style={styles.gradient}
             />
@@ -108,16 +122,15 @@ export default function SpeedGame() {
         </View>
 
         <View style={styles.indexView}>
-          <Text style={styles.indexText1}>4</Text>
+          <Text style={styles.indexText1}>{questionIndex}</Text>
           <Text style={styles.indexText2}>/5</Text>
         </View>
       </View>
 
-      {/* <View>
-        <Text style={styles.correctText}>정확도 {confidence !== null ? `${Math.round(confidence * 100)}%` : '로딩 중...'}</Text>
-      </View> */}
+      {gameResult !== '' && (
+        <Text style={styles.correctText}>{gameResult}</Text>
+      )}
 
-      {/* 카메라 비디오 스트리밍 WebView */}
       <View style={styles.cameraFeedWrapper}>
         <WebView
           source={{ uri: `${serverIP}/game1/video_feed` }}
@@ -139,11 +152,19 @@ export default function SpeedGame() {
       <GameModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        title="모든 문제를 다 풀었습니다."
+        title={questionIndex >= 5 ? "게임이 종료되었습니다!" : "정답입니다!"}
         content={<Image source={require("../../../assets/images/sonsuModel.png")} style={styles.Image} />}
         onOxPress={() => {
           setModalVisible(false);
-          navigation.navigate('Review');
+
+          if (questionIndex >= 5) {
+            navigation.navigate('Review');
+          } else {
+            fetchQuestion();
+            setTime(20);
+            setGameResult('');
+            setQuestionIndex(prev => prev + 1);
+          }
         }}
       />
     </View>
@@ -183,7 +204,7 @@ const styles = StyleSheet.create({
     width: '90%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignSelf: 'center', 
+    alignSelf: 'center',
     alignItems: 'center',
     marginTop: 15,
     paddingHorizontal: 30,
@@ -221,7 +242,6 @@ const styles = StyleSheet.create({
   cameraFeedWrapper: {
     alignSelf: 'center',
     width: "100%",
-    // height: 450,
     borderRadius: 12,
     overflow: "hidden",
     marginTop: 50,

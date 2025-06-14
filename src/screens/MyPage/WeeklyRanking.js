@@ -4,57 +4,61 @@ import { useEffect, useState } from "react";
 import InfoModal from "../../components/InfoModal";
 import axios from "axios";
 import { API_URL } from "../../../config";
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 const WeeklyRanking = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [userRankData, setUserRankData] = useState([]);
   
-  useEffect(() => {
-    const fetchRanking = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/mypage/ranking`);
-        const data = response.data;
+  useFocusEffect(
+    useCallback(() => {
+      const fetchRanking = async () => {
+        try {
+          const response = await axios.get(`${API_URL}/mypage/ranking`);
+          const data = response.data;
 
-        console.log("유저데이터", data);
+          console.log("유저데이터", data);
 
-        // 가장 높은 포인트
-        const maxPoints = Math.max(...data.map(user => user.week_points));
+          // 가장 높은 포인트
+          const maxPoints = Math.max(...data.map(user => user.week_points));
 
-        const top3 = data.slice(0, 3).map((user, index) => ({
-          rank: index + 1,
-          name: user.username,
-          nickname: "",
-          progress: user.week_points,
-          progressRate: (user.week_points / maxPoints) * 100, // 비율 추가
-        }));
+          const top3 = data.slice(0, 3).map((user, index) => ({
+            rank: index + 1,
+            name: user.username,
+            nickname: "",
+            progress: user.week_points,
+            progressRate: (user.week_points / maxPoints) * 100, // 비율 추가
+          }));
 
-        const currentUser = data[data.length - 1];
-        const user = {
-          rank: data.length,
-          name: currentUser.username,
-          nickname: currentUser.username,
-          progress: currentUser.week_points,
-          progressRate: (currentUser.week_points / maxPoints) * 100, // 비율 추가
-          isCurrentUser: true,
-        };
+          const currentUser = data[data.length - 1];
+          const user = {
+            rank: data.length,
+            name: currentUser.username,
+            nickname: currentUser.username,
+            progress: currentUser.week_points,
+            progressRate: (currentUser.week_points / maxPoints) * 100, // 비율 추가
+            isCurrentUser: true,
+          };
 
-        const isUserInTop3 = top3.some((u) => u.name === currentUser.username);
+          const isUserInTop3 = top3.some((u) => u.name === currentUser.username);
 
-        if (isUserInTop3) {
-          const updatedTop3 = top3.map((u) =>
-            u.name === currentUser.username ? { ...u, isCurrentUser: true } : u
-          );
-          setUserRankData(updatedTop3);
-        } else {
-          setUserRankData([...top3, user]);
+          if (isUserInTop3) {
+            const updatedTop3 = top3.map((u) =>
+              u.name === currentUser.username ? { ...u, isCurrentUser: true } : u
+            );
+            setUserRankData(updatedTop3);
+          } else {
+            setUserRankData([...top3, user]);
+          }
+        } catch (error) {
+          console.error("랭킹 데이터를 불러오는 데 실패했습니다:", error);
         }
-      } catch (error) {
-        console.error("랭킹 데이터를 불러오는 데 실패했습니다:", error);
-      }
-    };
+      };
 
-    fetchRanking();
-  }, []);
+      fetchRanking();
+    }, [])
+  );
 
   return (
     <View style={styles.rankContainer}>
