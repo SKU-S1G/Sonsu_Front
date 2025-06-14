@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   StyleSheet,
   View,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
+import { useFocusEffect } from '@react-navigation/native';
 import Header from "../../components/Header";
 import BackGround from "../../components/BackGround";
 import Notice from "../../components/Notice";
@@ -21,19 +22,21 @@ const AttendanceCheck = () => {
   const [attendanceData, setAttendanceData] = useState([]); // 출석 데이터 상태 추가
 
   // 출석 데이터 Fetch
-  useEffect(() => {
-    const fetchAttendanceData = async () => {
-      try {
-        const response = await fetch(`${API_URL}/attend`);
-        const data = await response.json();
-        setAttendanceData(data);
-      } catch (error) {
-        console.error("출석 데이터 가져오기 실패", error);
-      }
-    };
+  useFocusEffect(
+    useCallback(() => {
+      const fetchAttendanceData = async () => {
+        try {
+          const response = await fetch(`${API_URL}/attend`);
+          const data = await response.json();
+          setAttendanceData(data);
+        } catch (error) {
+          console.error("출석 데이터 가져오기 실패", error);
+        }
+      };
 
-    fetchAttendanceData();
-  }, []);
+      fetchAttendanceData();
+    }, [])
+  );
 
   // 현재 달의 출석한 날 수 계산
   const getAttendanceCount = () => {
