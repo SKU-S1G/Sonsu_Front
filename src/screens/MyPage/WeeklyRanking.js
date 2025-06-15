@@ -35,7 +35,7 @@ const WeeklyRanking = () => {
           const user = {
             rank: data.length,
             name: currentUser.username,
-            nickname: currentUser.username,
+            nickname: "",
             progress: currentUser.week_points,
             progressRate: (currentUser.week_points / maxPoints) * 100, // 비율 추가
             isCurrentUser: true,

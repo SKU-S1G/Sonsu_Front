@@ -18,7 +18,7 @@ CORS(app, resources={
 def index():
     return render_template('game1.html')  # 기본 페이지로 game1.html을 사용
 
-# 게임 결과 저장 라우트
+#게임 결과 저장 라우트
 @app.route('/game1/save_result', methods=['POST'])
 def save_result():
     data = request.json
