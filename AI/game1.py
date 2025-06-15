@@ -64,7 +64,7 @@ def draw_text(img, text, position, font, color=(0, 255, 0)):
     return np.array(img_pil)
 
 def generate_frames(target_width=480, target_height=700):  # 해상도 인자 추가
-    font = ImageFont.truetype("malgun.ttf", 30) # 윈도우에서 한글 출력 가능한 폰트
+    # font = ImageFont.truetype("NotoSansKR-Regular.otf", 30) # 윈도우에서 한글 출력 가능한 폰트
     global cap, seq, is_recognizing, _current_question, _game_result, _question_time
 
     if cap is None or not cap.isOpened():
