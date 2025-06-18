@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
   AItext: {
     backgroundColor: "white",
     width: "100%",
-
+    // height: "100%",
     borderRadius: 15,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
