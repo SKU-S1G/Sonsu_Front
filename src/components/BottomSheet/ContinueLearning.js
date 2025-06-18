@@ -6,6 +6,7 @@ import { API_URL } from "../../../config";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 import { Video } from "expo-av";
+import { useNavigation } from '@react-navigation/native';
 
 const ProgressBar = ({ progress }) => {
   return (
@@ -23,6 +24,7 @@ const ContinueLearning = () => {
 
   const [nextLesson, setNextLesson] = useState("");
   const [progress, setProgress] = useState(0);
+  const navigation = useNavigation();
 
   useFocusEffect(
     useCallback(() => {
@@ -100,7 +102,7 @@ const ContinueLearning = () => {
           <ProgressBar progress={progress} />
 
           <View style={styles.btnCotainer}>
-            <TouchableOpacity style={styles.learnBtn}>
+            <TouchableOpacity style={styles.learnBtn} onPress={() => navigation.navigate("Classroom")}>
               <Text style={styles.learnBtnText}>배움터 바로가기</Text>
             </TouchableOpacity>
           </View>
