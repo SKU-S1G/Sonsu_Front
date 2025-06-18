@@ -1,0 +1,9 @@
+{
+  "theme": {
+    "extend": {
+      "colors": {
+        "customColor": "#FF6347"
+      }
+    }
+  }
+}
