@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
   },
   cameraFeedWrapper: {
     alignSelf: 'center',
-    width: "80%",
+    width: "100%",
     borderRadius: 12,
     overflow: "hidden",
     marginTop: 50,

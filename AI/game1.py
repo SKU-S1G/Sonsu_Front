@@ -21,7 +21,7 @@ _current_question = None
 _game_result = None
 _question_time = 0  # 문제가 제시된 시간
 _min_confidence = 0.8  # 최소 신뢰도 임계값
-_warm_up_time = 3  # 문제 제시 후 판별 시작까지의 대기 시간(초)
+_warm_up_time = 0  # 문제 제시 후 판별 시작까지의 대기 시간(초)
 _confidence_value = None  # confidence 값을 저장할 전역 변수 추가
 
 def get_confidence():
@@ -64,7 +64,7 @@ def draw_text(img, text, position, font, color=(0, 255, 0)):
     return np.array(img_pil)
 
 def generate_frames(target_width=480, target_height=700):  # 해상도 인자 추가
-    # font = ImageFont.truetype("NotoSansKR-Regular.otf", 30) # 윈도우에서 한글 출력 가능한 폰트
+    font = ImageFont.truetype("C:/Windows/Fonts/malgun.ttf", 30) # 윈도우에서 한글 출력 가능한 폰트
     global cap, seq, is_recognizing, _current_question, _game_result, _question_time
 
     if cap is None or not cap.isOpened():

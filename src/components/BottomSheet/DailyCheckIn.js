@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Image } from "react-native";
-import React, { useEffect, useState } from "react";
-import {API_URL} from "../../../config";
+import React, { useCallback, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { API_URL } from "../../../config";
 import ShortcutButton from "../ShortcutButton";
 import axios from "axios";
 
@@ -28,27 +29,28 @@ const DailyCheckIn = () => {
 
   const [week, setWeek] = useState(getCurrentWeek);
 
-  useEffect(() => {
-    const fetchAttendanceData = async () => {
-      try {
-        const res = await axios.get(`${API_URL}/attend`);
-        const attendedMap = {};
-        res.data.forEach((item) => {
-          const dateObj = new Date(item.attend_date);
-          // KST 기준 날짜 추출
-          const kstOffset = 9 * 60 * 60 * 1000;
-          const localDate = new Date(dateObj.getTime() + kstOffset);
-          const dateString = localDate.toISOString().split("T")[0];
-          attendedMap[dateString] = true;
-        });
-        setAttendedDates(attendedMap);
-      } catch (error) {
-        console.error("출석 데이터를 불러오는 중 오류 발생:", error);
-      }
-    };    
+  useFocusEffect(
+    useCallback(() => {
+      const fetchAttendanceData = async () => {
+        try {
+          const res = await axios.get(`${API_URL}/attend`);
+          const attendedMap = {};
+          res.data.forEach((item) => {
+            const dateObj = new Date(item.attend_date);
+            const kstOffset = 9 * 60 * 60 * 1000;
+            const localDate = new Date(dateObj.getTime() + kstOffset);
+            const dateString = localDate.toISOString().split("T")[0];
+            attendedMap[dateString] = true;
+          });
+          setAttendedDates(attendedMap);
+        } catch (error) {
+          console.error("출석 데이터를 불러오는 중 오류 발생:", error);
+        }
+      };
 
-    fetchAttendanceData();
-  }, []);
+      fetchAttendanceData();
+    }, []) // 의존성 배열이 비어 있으면 화면 포커스 될 때마다 실행됨
+  );
 
   return (
     <View style={styles.container}>
