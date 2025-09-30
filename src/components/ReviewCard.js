@@ -15,7 +15,18 @@ export default function ReviewCard() {
   useEffect(() => {
     const fetchWrongAnswers = async () => {
       try {
-        const response = await axios.get(`${API_URL}/quiz/wrong`);
+        const accessToken = await getToken();
+        if (!accessToken) {
+          console.log("토큰이 없습니다");
+          setLoading(false);
+          return;
+        }
+        const response = await axios.get(`${API_URL}/quiz/wrong`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        });
         const data = response.data.rows;
 
         // recorded_at 기준 내림차순 정렬

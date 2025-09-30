@@ -6,7 +6,8 @@ import { API_URL } from "../../../config";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 import { Video } from "expo-av";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
+import { getToken } from "../../../authStorage";
 
 const ProgressBar = ({ progress }) => {
   return (
@@ -30,15 +31,27 @@ const ContinueLearning = () => {
     useCallback(() => {
       const fetchProgress = async () => {
         try {
+          const accessToken = await getToken();
+          if (!accessToken) {
+            console.log("토큰이 없습니다");
+            setLoading(false);
+            return;
+          }
           const response = await axios.get(`${API_URL}/progress/continue`, {
-            withCredentials: true,
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+            },
           });
           setNextLesson(response.data.nextLesson[0]);
 
           const progressResponse = await axios.get(
             `${API_URL}/progress/percentage`,
             {
-              withCredentials: true,
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+              },
             }
           );
           const progressValue = parseInt(
@@ -102,7 +115,10 @@ const ContinueLearning = () => {
           <ProgressBar progress={progress} />
 
           <View style={styles.btnCotainer}>
-            <TouchableOpacity style={styles.learnBtn} onPress={() => navigation.navigate("Classroom")}>
+            <TouchableOpacity
+              style={styles.learnBtn}
+              onPress={() => navigation.navigate("Classroom")}
+            >
               <Text style={styles.learnBtnText}>배움터 바로가기</Text>
             </TouchableOpacity>
           </View>
