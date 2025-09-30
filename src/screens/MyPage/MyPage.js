@@ -20,6 +20,7 @@ import tailwind from "tailwind-rn";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import axios from "axios";
 import { API_URL } from "../../../config";
+import { getToken } from "../../../authStorage";
 
 const MyPage = () => {
   const navigation = useNavigation();
@@ -45,20 +46,29 @@ const MyPage = () => {
   const [userInfo, setUserInfo] = useState({});
 
   useEffect(() => {
-    try {
-      axios
-        .get(`${API_URL}/login/success`, {
-          withCredentials: true,
-        })
-        .then((response) => {
-          if (response.data) {
-            setUserInfo(response.data);
-            console.log(response.data);
-          }
+    const fetchUserInfo = async () => {
+      try {
+        const accessToken = await getToken(); // ✅ await 추가
+        if (!accessToken) {
+          console.log("토큰이 없습니다");
+          return;
+        }
+        const response = await axios.get(`${API_URL}/login/success`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
         });
-    } catch (error) {
-      console.log("사용자 정보 가져오기 실패:", error.message);
-    }
+        if (response.data) {
+          setUserInfo(response.data);
+          console.log(response.data);
+        }
+      } catch (error) {
+        console.log("사용자 정보 가져오기 실패:", error.message);
+      }
+    };
+
+    fetchUserInfo();
   }, []);
 
   return (

@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "@react-navigation/native";
 import Header from "../../components/Header";
 import BackGround from "../../components/BackGround";
 import Notice from "../../components/Notice";
@@ -15,22 +15,60 @@ import Menu from "../../components/Menu";
 import { ScrollView } from "react-native-gesture-handler";
 import Pie from "../../components/Pie";
 import { API_URL } from "../../../config";
+import { getToken } from "../../../authStorage";
 
 const AttendanceCheck = () => {
   const [daysInMonth, setDaysInMonth] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [attendanceData, setAttendanceData] = useState([]); // 출석 데이터 상태 추가
+  const [attendanceData, setAttendanceData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // 출석 데이터 Fetch
   useFocusEffect(
     useCallback(() => {
       const fetchAttendanceData = async () => {
         try {
-          const response = await fetch(`${API_URL}/attend`);
+          setLoading(true);
+
+          const accessToken = await getToken();
+          if (!accessToken) {
+            console.log("토큰이 없습니다");
+            setLoading(false);
+            return;
+          }
+
+          console.log("출석 데이터 요청 시작");
+
+          const response = await fetch(`${API_URL}/attend`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
           const data = await response.json();
-          setAttendanceData(data);
+          console.log("출석 데이터 응답:", data);
+
+          // 데이터 형태 확인 및 안전한 처리
+          if (Array.isArray(data)) {
+            setAttendanceData(data);
+          } else if (data && Array.isArray(data.data)) {
+            setAttendanceData(data.data);
+          } else if (data && Array.isArray(data.attendance)) {
+            setAttendanceData(data.attendance);
+          } else {
+            console.warn("예상치 못한 데이터 형태:", data);
+            setAttendanceData([]);
+          }
         } catch (error) {
-          console.error("출석 데이터 가져오기 실패", error);
+          console.error("출석 데이터 가져오기 실패:", error.message);
+          setAttendanceData([]);
+        } finally {
+          setLoading(false);
         }
       };
 
@@ -43,12 +81,15 @@ const AttendanceCheck = () => {
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
 
-    // 출석 데이터에서 현재 달에 해당하는 출석일 수 계산
     const attendedDays = attendanceData.filter((attendance) => {
-      const attendDate = new Date(attendance.attend_date);
+      const dateObj = new Date(attendance.attend_date);
+      // KST 기준 날짜 추출 (DailyCheckIn.js와 동일한 방식)
+      const kstOffset = 9 * 60 * 60 * 1000;
+      const localDate = new Date(dateObj.getTime() + kstOffset);
+
       return (
-        attendDate.getMonth() === currentMonth &&
-        attendDate.getFullYear() === currentYear &&
+        localDate.getMonth() === currentMonth &&
+        localDate.getFullYear() === currentYear &&
         attendance.status === 1
       );
     });
@@ -61,27 +102,28 @@ const AttendanceCheck = () => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
     const lastDay = new Date(year, month + 1, 0);
-    return lastDay.getDate(); // 해당 월의 일 수 반환
+    return lastDay.getDate();
   };
 
   // 출석률 계산
   const attendanceCount = getAttendanceCount();
   const totalDays = getDaysInMonth();
-  const attendancePercentage = (attendanceCount / totalDays) * 100;
+  const attendancePercentage =
+    totalDays > 0 ? (attendanceCount / totalDays) * 100 : 0;
 
   // 현재 날짜에 맞는 달력 데이터 생성
   useEffect(() => {
     const now = currentDate;
     const year = now.getFullYear();
-    const month = now.getMonth(); // 0 ~ 11, 0은 1월
+    const month = now.getMonth();
     const firstDayOfMonth = new Date(year, month, 1);
     const lastDayOfMonth = new Date(year, month + 1, 0);
 
     const days = [];
-    const startDay = firstDayOfMonth.getDay(); // 월 첫째 날의 요일 (0: 일요일, 6: 토요일)
-    const lastDate = lastDayOfMonth.getDate(); // 해당 월의 마지막 날짜
+    const startDay = firstDayOfMonth.getDay();
+    const lastDate = lastDayOfMonth.getDate();
 
-    // 이전 달의 날짜 추가 (해당 월의 첫날이 시작하는 요일에 맞춰서)
+    // 이전 달의 날짜 추가
     const prevMonth = new Date(year, month, 0);
     const prevMonthLastDate = prevMonth.getDate();
     const prevMonthDays = [];
@@ -99,7 +141,7 @@ const AttendanceCheck = () => {
     }
 
     const totalDays = prevMonthDays.length + currentMonthDays.length;
-    const remainingDays = totalDays % 7 === 0 ? 0 : 7 - (totalDays % 7); // 한 줄 더 추가되는 문제 방지
+    const remainingDays = totalDays % 7 === 0 ? 0 : 7 - (totalDays % 7);
 
     const nextMonthDays = [];
     for (let i = 1; i <= remainingDays; i++) {
@@ -109,7 +151,6 @@ const AttendanceCheck = () => {
       });
     }
 
-    // 전체 날짜 배열 합치기
     setDaysInMonth([...prevMonthDays, ...currentMonthDays, ...nextMonthDays]);
   }, [currentDate]);
 
@@ -125,20 +166,70 @@ const AttendanceCheck = () => {
   };
 
   // 출석 상태가 있는지 확인하는 함수
+  // const isAttended = (date) => {
+  //   const formattedDate = new Date(
+  //     currentDate.getFullYear(),
+  //     currentDate.getMonth(),
+  //     date
+  //   );
+
+  //   const result = attendanceData.some((attendance) => {
+  //     const dateObj = new Date(attendance.attend_date);
+  //     // KST 기준 날짜 추출 (DailyCheckIn.js와 동일한 방식)
+  //     const kstOffset = 9 * 60 * 60 * 1000;
+  //     const localDate = new Date(dateObj.getTime() + kstOffset);
+
+  //     // 디버깅 로그
+  //     if (date === 1) {
+  //       console.log("10월 1일 체크:", {
+  //         원본날짜: attendance.attend_date,
+  //         변환후: localDate.toISOString(),
+  //         날짜: localDate.getDate(),
+  //         월: localDate.getMonth(),
+  //         연도: localDate.getFullYear(),
+  //         비교대상날짜: formattedDate.getDate(),
+  //         비교대상월: formattedDate.getMonth(),
+  //         비교대상연도: formattedDate.getFullYear(),
+  //         status: attendance.status,
+  //       });
+  //     }
+
+  //     return (
+  //       localDate.getDate() === formattedDate.getDate() &&
+  //       localDate.getMonth() === formattedDate.getMonth() &&
+  //       localDate.getFullYear() === formattedDate.getFullYear() &&
+  //       attendance.status === 1
+  //     );
+  //   });
+
+  //   if (date === 1) {
+  //     console.log("10월 1일 최종 결과:", result);
+  //   }
+
+  //   return result;
+  // };
+
+  // 기존 isAttended 함수 삭제 후 아래로 교체
   const isAttended = (date) => {
-    const formattedDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      date
-    );
+    const kstOffset = 9 * 60 * 60 * 1000;
+
+    const dateString = `${currentDate.getFullYear()}-${String(
+      currentDate.getMonth() + 1
+    ).padStart(2, "0")}-${String(date).padStart(2, "0")}`;
+
+    // attendanceData 순회하면서 날짜 문자열 비교
     return attendanceData.some((attendance) => {
-      const attendDate = new Date(attendance.attend_date);
-      return (
-        attendDate.getDate() === formattedDate.getDate() &&
-        attendDate.getMonth() === formattedDate.getMonth() &&
-        attendDate.getFullYear() === formattedDate.getFullYear() &&
-        attendance.status === 1 // 출석 상태
-      );
+      try {
+        const localDate = new Date(
+          new Date(attendance.attend_date).getTime() + kstOffset
+        );
+        const attendanceDateString = localDate.toISOString().split("T")[0];
+
+        return attendanceDateString === dateString && attendance.status === 1;
+      } catch (error) {
+        console.error("날짜 변환 오류:", error, attendance);
+        return false;
+      }
     });
   };
 
@@ -169,23 +260,20 @@ const AttendanceCheck = () => {
   };
 
   const renderItem = ({ item }) => {
-    if (!item.date) return null; // item.date가 없다면 렌더링하지 않음
+    if (!item.date) return null;
 
     return (
       <View
-        key={`${item.date}-${item.isCurrentMonth}`} // date와 isCurrentMonth를 결합한 고유한 key 사용
-        style={[
-          styles.day,
-          !item.isCurrentMonth && styles.disabledDay, // 현재 월이 아닌 날짜는 비활성화
-        ]}
+        key={`${item.date}-${item.isCurrentMonth}`}
+        style={[styles.day, !item.isCurrentMonth && styles.disabledDay]}
       >
         <TouchableOpacity>
           <Text
             style={[
               styles.dayText,
-              !item.isCurrentMonth && styles.disabledDayText, // 현재 월이 아닌 날짜 스타일
-              isToday(item) && styles.todayText, // 오늘 날짜일 때 텍스트 색상 변경
-              isAttended(item.date) && styles.attendedDayText, // 출석한 날짜 강조
+              !item.isCurrentMonth && styles.disabledDayText,
+              isToday(item) && styles.todayText,
+              isAttended(item.date) && styles.attendedDayText,
             ]}
           >
             {item.date}
@@ -201,6 +289,20 @@ const AttendanceCheck = () => {
       </View>
     );
   };
+
+  if (loading) {
+    return (
+      <View>
+        <Header />
+        <BackGround />
+        <View style={{ alignItems: "center", marginTop: 100 }}>
+          <Text style={{ fontSize: 18, color: "#666" }}>
+            출석 데이터를 불러오는 중...
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View>
@@ -229,7 +331,7 @@ const AttendanceCheck = () => {
           내 수어 학습 출석률은? 오늘도 한 걸음 더 나아가요!
         </Text>
       </View>
-      {/* 달력 */}
+
       <ScrollView>
         <View style={styles.calenderContainer}>
           <View style={styles.monthHeader}>
@@ -249,10 +351,8 @@ const AttendanceCheck = () => {
           </View>
         </View>
 
-        {/* 공지 */}
         <Notice NotText="출석은 하루에 최소 1개 이상의 학습을 완료해야만 인정됩니다." />
 
-        {/* 나의 00월 출석률은? */}
         <View style={{ width: "90%", alignSelf: "center", marginTop: 45 }}>
           <Text style={styles.title}>
             나의 {currentDate.getMonth() + 1}월 출석률은?
@@ -335,7 +435,7 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     justifyContent: "center",
     alignItems: "center",
-    position: "relative", // 이미지가 날짜 위에 나타나도록 설정
+    position: "relative",
     margin: 3,
   },
   dayText: {
@@ -350,7 +450,7 @@ const styles = StyleSheet.create({
   },
   selectedDay: {},
   selectedImage: {
-    backgroundColor: "#FFE694", // 선택된 날짜 스타일
+    backgroundColor: "#FFE694",
     position: "absolute",
     borderRadius: 30,
     width: 35,
@@ -369,9 +469,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingLeft: 10,
   },
-  PieWrap: {
-    // backgroundColor: "red",
-  },
+  PieWrap: {},
 });
 
 export default AttendanceCheck;

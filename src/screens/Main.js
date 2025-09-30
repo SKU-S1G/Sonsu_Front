@@ -4,28 +4,39 @@ import BottomSheet from "../components/BottomSheet/BottomSheet";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { API_URL } from "../../config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Main = () => {
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useState({});
-
   useEffect(() => {
-    try {
-      axios
-        .get(`${API_URL}/login/success`, {
-          withCredentials: true,
-        })
-        .then((response) => {
-          if (response.data) {
-            setUserInfo(response.data);
-            console.log(response.data);
-          }
-        });
-    } catch (error) {
-      console.log("사용자 정보 가져오기 실패:", error.message);
-    }
-  }, []);
+    const fetchUserInfo = async () => {
+      try {
+        const token = await AsyncStorage.getItem("accessToken");
+        if (!token) {
+          console.log("토큰 없음, 로그인 필요");
+          return;
+        }
 
+        const res = await axios.get(`${API_URL}/login/success`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setUserInfo(res.data);
+        console.log(res.data);
+      } catch (error) {
+        console.log(
+          "사용자 정보 가져오기 실패:",
+          error.response?.status,
+          error.message
+        );
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
   return (
     <View style={styles.container}>
       <View style={styles.Model}>

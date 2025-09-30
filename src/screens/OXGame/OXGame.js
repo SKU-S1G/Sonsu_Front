@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text, TouchableOpacity, Image, Alert } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import MaskedView from "@react-native-masked-view/masked-view";
 import SpeedBack from "../../components/SpeedBack";
@@ -10,6 +17,7 @@ import { useFonts } from "expo-font";
 import { customFonts } from "../../../src/constants/fonts";
 import axios from "axios";
 import GameModal from "../../components/GameModal";
+import { getToken } from "../../../authStorage";
 
 export default function OXGame() {
   const [quizzes, setQuizzes] = useState([]);
@@ -37,7 +45,18 @@ export default function OXGame() {
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
-        const res = await axios.get(`${API_URL}/quiz/generate`);
+        const accessToken = await getToken();
+        if (!accessToken) {
+          console.log("토큰이 없습니다");
+          setLoading(false);
+          return;
+        }
+        const res = await axios.get(`${API_URL}/quiz/generate`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        });
         setQuizzes(res.data.quizzes);
         setSessionId(res.data.sessionId);
         setUserAnswers(new Array(res.data.quizzes.length).fill(null));
@@ -87,10 +106,25 @@ export default function OXGame() {
 
     setIsSubmitting(true);
     try {
-      const res = await axios.post(`${API_URL}/quiz/check`, {
-        sessionId: sessionId,
-        answers: userAnswers,
-      });
+      const accessToken = await getToken();
+      if (!accessToken) {
+        console.log("토큰이 없습니다");
+        setLoading(false);
+        return;
+      }
+      const res = await axios.post(
+        `${API_URL}/quiz/check`,
+        {
+          sessionId: sessionId,
+          answers: userAnswers,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       console.log("res", res);
       if (res.status === 200) {
         setQuizResult({

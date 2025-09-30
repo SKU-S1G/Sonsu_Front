@@ -7,6 +7,7 @@ import { Video } from "expo-av";
 import { API_URL, serverIP } from "../../../config";
 import { WebView } from "react-native-webview";
 import axios from "axios";
+import { getToken } from "../../../authStorage";
 
 export default function Study() {
   const route = useRoute();
@@ -15,22 +16,31 @@ export default function Study() {
   const [animation, setAnimation] = useState("");
 
   console.log("레슨아이디", lesson);
+  console.log("토픽 정보", topic);
 
   const fetchTopic = async () => {
     try {
-      const response = await axios.get(
-        `${API_URL}/lessons/${lesson.id}/topics`
-      );
+      // lesson이 객체인 경우 처리
+      const lessonId =
+        typeof lesson === "object" ? lesson.lesson_id : lesson.id;
+
+      console.log("요청할 lessonId:", lessonId);
+
+      const response = await axios.get(`${API_URL}/lessons/${lessonId}/topics`);
       console.log("토픽 데이터", response.data);
+
       const topicData = response.data.find((t) => t.word === topic.word);
       if (topicData) {
         const animationPath = topicData.animation_path;
         console.log("서버에서 전달된 URL:", animationPath);
         setAnimation(animationPath);
-        // setAnimation(topiceData.animation_path);
       }
     } catch (error) {
       console.log("애니메이션 불러오기 실패:", error.message);
+      if (error.response) {
+        console.log("에러 상태:", error.response.status);
+        console.log("에러 데이터:", error.response.data);
+      }
     }
   };
 
@@ -38,11 +48,26 @@ export default function Study() {
 
   const startLesson = async () => {
     try {
+      const accessToken = await getToken();
+
+      if (!accessToken) {
+        console.log("토큰이 없습니다. 로그인이 필요합니다.");
+        return;
+      }
+
+      console.log("강의 시작 요청 - lessonId:", topic.lesson_id);
+
       const response = await axios.post(
         `${API_URL}/lessons/start`,
         { lessonId: topic.lesson_id },
-        { withCredentials: true }
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
+
       if (response.status === 200) {
         console.log("강의가 시작되었습니다", response.data);
       }
@@ -52,6 +77,9 @@ export default function Study() {
           console.log("로그인을 해주세요.");
         } else if (error.response.status === 403) {
           console.log("접근이 거부되었습니다. 토큰이 유효하지 않습니다.");
+        } else {
+          console.log("에러 상태:", error.response.status);
+          console.log("에러 데이터:", error.response.data);
         }
       } else {
         console.log("에러 발생:", error.message);
@@ -79,14 +107,15 @@ export default function Study() {
         </View>
       </TouchableOpacity>
 
-      {topic && (
+      {/* topic.animation_path를 직접 사용 (이미 URL이 있음) */}
+      {topic?.animation_path && (
         <Video
           source={{ uri: topic.animation_path }}
           resizeMode="contain"
           isLooping
           style={styles.video}
           useNativeControls={true}
-          shouldPlay={true} // 이건 OK, 필요에 따라 제거 가능
+          shouldPlay={true}
         />
       )}
 
@@ -108,7 +137,6 @@ export default function Study() {
           allowsFullscreenVideo={true}
           allowsInlineMediaPlayback={true}
           mediaPlaybackRequiresUserAction={false}
-          onError={(error) => console.log("WebView error:", error)}
           onHttpError={(syntheticEvent) => {
             const { nativeEvent } = syntheticEvent;
             // console.log("HTTP error: ", nativeEvent);
