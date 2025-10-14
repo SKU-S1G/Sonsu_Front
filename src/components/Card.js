@@ -1,10 +1,30 @@
-import React from "react";
+import React, { useRef } from "react";
+import { Audio } from "expo-av";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import tailwind from "tailwind-rn";
 import { Video } from "expo-av";
 
 export default function Card({ lesson, currentProgress, onPress }) {
+  const soundRef = useRef(null);
+
+  const playClickSound = async () => {
+    try {
+      // 기존 소리 unload
+      if (soundRef.current) {
+        await soundRef.current.unloadAsync();
+        soundRef.current = null;
+      }
+
+      const { sound } = await Audio.Sound.createAsync(
+        require("../../assets/Sounds/Click.mp3")
+      );
+      soundRef.current = sound;
+      await sound.playAsync();
+    } catch (error) {
+      console.log("사운드 재생 오류:", error);
+    }
+  };
   return (
     <View>
       <View style={styles.contentContainer} onPress={onPress}>
@@ -29,7 +49,10 @@ export default function Card({ lesson, currentProgress, onPress }) {
         </View>
       </View>
       <TouchableOpacity
-        onPress={onPress}
+        onPress={() => {
+          playClickSound(); // 클릭 소리 재생
+          onPress(); // 기존 onPress 동작
+        }}
         style={[
           tailwind("items-center text-center"),
           {

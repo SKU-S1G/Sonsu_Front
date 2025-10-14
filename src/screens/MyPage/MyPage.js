@@ -1,3 +1,4 @@
+import { Audio } from "expo-av";
 import {
   Image,
   Text,
@@ -7,7 +8,7 @@ import {
   Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Header from "../../components/Header";
 import BackGround from "../../components/BackGround";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
@@ -23,6 +24,25 @@ import { API_URL } from "../../../config";
 import { getToken } from "../../../authStorage";
 
 const MyPage = () => {
+  const soundRef = useRef(null);
+
+  const playClickSound = async () => {
+    try {
+      // 기존 소리 unload
+      if (soundRef.current) {
+        await soundRef.current.unloadAsync();
+        soundRef.current = null;
+      }
+
+      const { sound } = await Audio.Sound.createAsync(
+        require("../../../assets/Sounds/Click.mp3")
+      );
+      soundRef.current = sound;
+      await sound.playAsync();
+    } catch (error) {
+      console.log("사운드 재생 오류:", error);
+    }
+  };
   const navigation = useNavigation();
 
   const handleLogout = () => {
@@ -123,7 +143,10 @@ const MyPage = () => {
         {/* 출석체크 */}
         <TouchableOpacity
           style={styles.tabContent}
-          onPress={() => navigation.navigate("AttendanceCheck")}
+          onPress={() => {
+            playClickSound();
+            navigation.navigate("AttendanceCheck");
+          }}
         >
           <Text style={{ fontSize: 13 }}>출석체크</Text>
           <FontAwesome6
@@ -136,7 +159,10 @@ const MyPage = () => {
         {/* 수어 다시보기 */}
         <TouchableOpacity
           style={styles.tabContent}
-          onPress={() => navigation.navigate("SignReview")}
+          onPress={() => {
+            playClickSound();
+            navigation.navigate("SignReview");
+          }}
         >
           <Text style={{ fontSize: 13 }}>즐겨찾기</Text>
           <FontAwesome5
@@ -149,7 +175,10 @@ const MyPage = () => {
         {/* 주간 리포트 */}
         <TouchableOpacity
           style={styles.tabContent}
-          onPress={() => navigation.navigate("WeeklyReport")}
+          onPress={() => {
+            playClickSound();
+            navigation.navigate("WeeklyReport");
+          }}
         >
           <Text style={{ fontSize: 13 }}>주간 리포트</Text>
           <SimpleLineIcons
@@ -168,7 +197,10 @@ const MyPage = () => {
         >
           <Text style={tailwind("text-lg font-bold")}>오답 수어 다시보기</Text>
           <TouchableOpacity
-            onPress={() => navigation.navigate("ReviewIncorrectSigns")}
+            onPress={() => {
+              playClickSound();
+              navigation.navigate("ReviewIncorrectSigns");
+            }}
           >
             <AntDesign name="arrowright" size={24} color="black" />
           </TouchableOpacity>
