@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { Audio } from "expo-av";
 import {
   StyleSheet,
   View,
@@ -23,6 +24,43 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { getToken } from "../../../authStorage";
 
 export default function LessonDetail() {
+  const soundRef = useRef(null);
+
+  const playClickSound = async () => {
+    try {
+      // 기존 소리 unload
+      if (soundRef.current) {
+        await soundRef.current.unloadAsync();
+        soundRef.current = null;
+      }
+
+      const { sound } = await Audio.Sound.createAsync(
+        require("../../../assets/Sounds/Click.mp3")
+      );
+      soundRef.current = sound;
+      await sound.playAsync();
+    } catch (error) {
+      console.log("사운드 재생 오류:", error);
+    }
+  };
+
+  const playBookmarkSound = async () => {
+    try {
+      // 기존 소리 unload
+      if (soundRef.current) {
+        await soundRef.current.unloadAsync();
+        soundRef.current = null;
+      }
+
+      const { sound } = await Audio.Sound.createAsync(
+        require("../../../assets/Sounds/Bookmark.mp3")
+      );
+      soundRef.current = sound;
+      await sound.playAsync();
+    } catch (error) {
+      console.log("사운드 재생 오류:", error);
+    }
+  };
   const navigation = useNavigation();
   const route = useRoute();
   const { lesson, selectedLevel: initialSelectedLevel } = route.params;
@@ -273,12 +311,18 @@ export default function LessonDetail() {
               key={index}
               style={styles.contentContainer}
               disabled={isLocked}
-              onPress={() => handleTopicClick(topic, index)}
+              onPress={() => {
+                playClickSound();
+                handleTopicClick(topic, index);
+              }}
             >
               <View style={styles.card}>
                 {!isLocked && (
                   <TouchableOpacity
-                    onPress={() => handleBookmark(topic.lesson_id)}
+                    onPress={() => {
+                      playBookmarkSound();
+                      handleBookmark(topic.lesson_id);
+                    }}
                     style={{
                       position: "absolute",
                       top: 10,

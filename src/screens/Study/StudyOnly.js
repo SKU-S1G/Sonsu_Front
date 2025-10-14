@@ -113,7 +113,7 @@ export default function StudyOnly() {
       {/* 카메라 비디오 스트리밍 WebView */}
       <View style={styles.cameraFeedWrapper}>
         <WebView
-          source={{ uri: `${serverIP}/game1/video_feed` }}
+          source={{ uri: `${serverIP}/video_feed` }}
           style={styles.cameraFeed}
           javaScriptEnabled={true}
           domStorageEnabled={true}

@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, Image, TouchableOpacity } from 'react-native';
-import { useFonts } from 'expo-font';
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
+import { useFonts } from "expo-font";
 import { customFonts } from "../../../src/constants/fonts";
-import { LinearGradient } from 'expo-linear-gradient';
-import MaskedView from '@react-native-masked-view/masked-view';
-import Header from '../../components/Header';
-import BackGround from '../../components/BackGround';
+import { LinearGradient } from "expo-linear-gradient";
+import MaskedView from "@react-native-masked-view/masked-view";
+import Header from "../../components/Header";
+import BackGround from "../../components/BackGround";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { WebView } from "react-native-webview";
 import { serverIP } from "../../../config";
-import GameModal from '../../components/GameModal';
+import GameModal from "../../components/GameModal";
 
-import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
+import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
 
 export default function SpeedGame() {
   const [fontsLoaded] = useFonts(customFonts);
   const [modalVisible, setModalVisible] = useState(false);
-  const [question, setQuestion] = useState('');
-  const [gameResult, setGameResult] = useState('');
+  const [question, setQuestion] = useState("");
+  const [gameResult, setGameResult] = useState("");
   const [time, setTime] = useState(20);
   const [questionIndex, setQuestionIndex] = useState(1); // 문제 번호 관리
   const navigation = useNavigation();
@@ -34,14 +34,14 @@ export default function SpeedGame() {
       } else {
         fetchQuestion();
         setTime(20);
-        setGameResult('');
-        setQuestionIndex(prev => prev + 1);
+        setGameResult("");
+        setQuestionIndex((prev) => prev + 1);
       }
       return;
     }
 
     const timerId = setTimeout(() => {
-      setTime(prev => prev - 1);
+      setTime((prev) => prev - 1);
     }, 1000);
 
     return () => clearTimeout(timerId);
@@ -49,17 +49,17 @@ export default function SpeedGame() {
 
   const fetchQuestion = async () => {
     try {
-      const response = await axios.get(`${serverIP}/game1/get_question`);
+      const response = await axios.get(`${serverIP}/get_question`);
       setQuestion(response.data.question);
-      setGameResult('');
+      setGameResult("");
     } catch (error) {
-      console.error('단어를 불러오는 중 오류 발생:', error);
+      console.error("단어를 불러오는 중 오류 발생:", error);
     }
   };
 
   const fetchGameInfo = async () => {
     try {
-      const response = await axios.get(`${serverIP}/game1/get_game_info`);
+      const response = await axios.get(`${serverIP}/get_game_info`);
       const { game_result } = response.data;
 
       if (game_result && game_result !== gameResult) {
@@ -70,7 +70,7 @@ export default function SpeedGame() {
         }
       }
     } catch (error) {
-      console.error('게임 정보 가져오기 실패:', error);
+      console.error("게임 정보 가져오기 실패:", error);
     }
   };
 
@@ -82,7 +82,11 @@ export default function SpeedGame() {
   }, [gameResult]);
 
   if (!fontsLoaded) {
-    return <View><Text>Loading...</Text></View>;
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    );
   }
 
   return (
@@ -101,7 +105,7 @@ export default function SpeedGame() {
             }
           >
             <LinearGradient
-              colors={['#F26851', '#FFC0B6']}
+              colors={["#F26851", "#FFC0B6"]}
               start={{ x: 0, y: 0.8 }}
               end={{ x: 1, y: 0 }}
               style={styles.gradient}
@@ -110,7 +114,10 @@ export default function SpeedGame() {
         </View>
       </View>
 
-      <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.signView}>
+      <TouchableOpacity
+        onPress={() => setModalVisible(true)}
+        style={styles.signView}
+      >
         <Text style={styles.signText1}>단어</Text>
         <Text style={styles.signText2}>{question}</Text>
       </TouchableOpacity>
@@ -127,13 +134,13 @@ export default function SpeedGame() {
         </View>
       </View>
 
-      {gameResult !== '' && (
+      {gameResult !== "" && (
         <Text style={styles.correctText}>{gameResult}</Text>
       )}
 
       <View style={styles.cameraFeedWrapper}>
         <WebView
-          source={{ uri: `${serverIP}/game1/video_feed` }}
+          source={{ uri: `${serverIP}/video_feed` }}
           style={styles.cameraFeed}
           javaScriptEnabled={true}
           domStorageEnabled={true}
@@ -153,17 +160,22 @@ export default function SpeedGame() {
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         title={questionIndex >= 5 ? "게임이 종료되었습니다!" : "정답입니다!"}
-        content={<Image source={require("../../../assets/images/sonsuModel.png")} style={styles.Image} />}
+        content={
+          <Image
+            source={require("../../../assets/images/sonsuModel.png")}
+            style={styles.Image}
+          />
+        }
         onOxPress={() => {
           setModalVisible(false);
 
           if (questionIndex >= 5) {
-            navigation.navigate('Review');
+            navigation.navigate("Review");
           } else {
             fetchQuestion();
             setTime(20);
-            setGameResult('');
-            setQuestionIndex(prev => prev + 1);
+            setGameResult("");
+            setQuestionIndex((prev) => prev + 1);
           }
         }}
       />
@@ -180,67 +192,67 @@ const styles = StyleSheet.create({
     height: 30,
   },
   gradient: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   speedText: {
     fontSize: 30,
-    fontFamily: 'RixInooAriDuriRegular',
-    color: 'white',
+    fontFamily: "RixInooAriDuriRegular",
+    color: "white",
     marginLeft: 30,
   },
   signView: {
-    alignSelf: 'center',
-    marginTop: 25
+    alignSelf: "center",
+    marginTop: 25,
   },
   signText1: {
     fontSize: 17,
   },
   signText2: {
     fontSize: 25,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   showContainer: {
-    width: '90%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignSelf: 'center',
-    alignItems: 'center',
+    width: "90%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignSelf: "center",
+    alignItems: "center",
     marginTop: 15,
     paddingHorizontal: 30,
     paddingVertical: 5,
   },
   timeView: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   timeText: {
-    fontFamily: 'RixInooAriDuriRegular',
+    fontFamily: "RixInooAriDuriRegular",
     fontSize: 25,
     marginLeft: 10,
   },
   indexView: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   indexText1: {
     fontSize: 30,
-    fontWeight: 'bold',
-    color: '#39B360',
+    fontWeight: "bold",
+    color: "#39B360",
   },
   indexText2: {
     fontSize: 25,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   correctText: {
-    alignSelf: 'center',
+    alignSelf: "center",
     fontSize: 20,
-    fontWeight: 'bold',
-    color: 'red',
+    fontWeight: "bold",
+    color: "red",
     marginTop: 5,
   },
   cameraFeedWrapper: {
-    alignSelf: 'center',
+    alignSelf: "center",
     width: "80%",
     borderRadius: 12,
     overflow: "hidden",

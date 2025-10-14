@@ -1,14 +1,34 @@
-import React from "react";
+import React, { useRef } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Feather from "@expo/vector-icons/Feather";
 import Main from "../screens/Main";
 import Classroom from "../screens/Classroom/Classroom";
 import MyPage from "../screens/MyPage/MyPage";
 import { View, Image, StyleSheet } from "react-native";
+import { Audio } from "expo-av";
 
 const Tab = createBottomTabNavigator();
 
 const Menu = () => {
+  const soundRef = useRef(null);
+
+  const playClickSound = async () => {
+    try {
+      // 기존 소리 unload
+      if (soundRef.current) {
+        await soundRef.current.unloadAsync();
+        soundRef.current = null;
+      }
+
+      const { sound } = await Audio.Sound.createAsync(
+        require("../../assets/Sounds/Click.mp3")
+      );
+      soundRef.current = sound;
+      await sound.playAsync();
+    } catch (error) {
+      console.log("사운드 재생 오류:", error);
+    }
+  };
   return (
     <>
       <Tab.Navigator
@@ -21,6 +41,11 @@ const Menu = () => {
           tabBarActiveTintColor: "#FFCA1A", // 활성화된 탭의 텍스트와 아이콘 색상 변경
           tabBarInactiveTintColor: "black", // 비활성화된 탭의 텍스트와 아이콘 색상 변경
           headerShown: false,
+        }}
+        screenListeners={{
+          tabPress: () => {
+            playClickSound(); // ✅ 탭 클릭 시 효과음 재생
+          },
         }}
       >
         <Tab.Screen
