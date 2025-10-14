@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
+import { Audio } from "expo-av";
 import {
   StyleSheet,
   View,
@@ -18,6 +19,25 @@ import { API_URL } from "../../../config";
 import { getToken } from "../../../authStorage";
 
 export default function Classroom() {
+  const soundRef = useRef(null);
+
+  const playClickSound = async () => {
+    try {
+      // 기존 소리 unload
+      if (soundRef.current) {
+        await soundRef.current.unloadAsync();
+        soundRef.current = null;
+      }
+
+      const { sound } = await Audio.Sound.createAsync(
+        require("../../../assets/Sounds/Click.mp3")
+      );
+      soundRef.current = sound;
+      await sound.playAsync();
+    } catch (error) {
+      console.log("사운드 재생 오류:", error);
+    }
+  };
   const [selectedLevel, setSelectedLevel] = useState("초급");
   const [progress, setProgress] = useState([]);
   const [topics, setTopics] = useState([]);
@@ -177,6 +197,7 @@ export default function Classroom() {
                 isButtonLocked && { opacity: 0.4 },
               ]}
               onPress={() => {
+                playClickSound();
                 if (!isButtonLocked) {
                   setSelectedLevel(level);
                   fetchCategories(level);
@@ -252,12 +273,13 @@ export default function Classroom() {
                       : "#fff",
             },
           ]}
-          onPress={() =>
+          onPress={() => {
+            playClickSound();
             navigation.navigate("Study", {
               topic: nextLesson,
               lesson: nextLesson,
-            })
-          }
+            });
+          }}
         >
           <View style={styles.card_}>
             <View style={styles.imageContainer_}>
@@ -292,12 +314,13 @@ export default function Classroom() {
             <TouchableOpacity
               key={lesson.id}
               style={styles.contentContainer}
-              onPress={() =>
+              onPress={() => {
+                playClickSound();
                 navigation.navigate("LessonDetail", {
                   lesson,
                   selectedLevel: selectedLevel,
-                })
-              }
+                });
+              }}
               disabled={isLocked}
             >
               <View

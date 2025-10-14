@@ -130,7 +130,7 @@ export default function Study() {
 
       <View style={styles.cameraFeedWrapper}>
         <WebView
-          source={{ uri: `${serverIP}/game1/video_feed` }}
+          source={{ uri: `${serverIP}/video_feed` }}
           style={styles.cameraFeed}
           javaScriptEnabled={true}
           domStorageEnabled={true}
