@@ -1,16 +1,36 @@
 import { Image, Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { Audio } from "expo-av";
 import InfoModal from "../../components/InfoModal";
 import axios from "axios";
 import { API_URL } from "../../../config";
-import { useFocusEffect } from '@react-navigation/native';
-import { useCallback } from 'react';
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 const WeeklyRanking = () => {
+  const soundRef = useRef(null);
+
+  const playClickSound = async () => {
+    try {
+      // 기존 소리 unload
+      if (soundRef.current) {
+        await soundRef.current.unloadAsync();
+        soundRef.current = null;
+      }
+
+      const { sound } = await Audio.Sound.createAsync(
+        require("../../../assets/Sounds/AlertClick.mp3")
+      );
+      soundRef.current = sound;
+      await sound.playAsync();
+    } catch (error) {
+      console.log("사운드 재생 오류:", error);
+    }
+  };
   const [modalVisible, setModalVisible] = useState(false);
   const [userRankData, setUserRankData] = useState([]);
-  
+
   useFocusEffect(
     useCallback(() => {
       const fetchRanking = async () => {
@@ -21,7 +41,7 @@ const WeeklyRanking = () => {
           console.log("유저데이터", data);
 
           // 가장 높은 포인트
-          const maxPoints = Math.max(...data.map(user => user.week_points));
+          const maxPoints = Math.max(...data.map((user) => user.week_points));
 
           const top3 = data.slice(0, 3).map((user, index) => ({
             rank: index + 1,
@@ -41,11 +61,15 @@ const WeeklyRanking = () => {
             isCurrentUser: true,
           };
 
-          const isUserInTop3 = top3.some((u) => u.name === currentUser.username);
+          const isUserInTop3 = top3.some(
+            (u) => u.name === currentUser.username
+          );
 
           if (isUserInTop3) {
             const updatedTop3 = top3.map((u) =>
-              u.name === currentUser.username ? { ...u, isCurrentUser: true } : u
+              u.name === currentUser.username
+                ? { ...u, isCurrentUser: true }
+                : u
             );
             setUserRankData(updatedTop3);
           } else {
@@ -70,7 +94,12 @@ const WeeklyRanking = () => {
         }}
       >
         <Text style={styles.title}>주간 랭킹</Text>
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
+        <TouchableOpacity
+          onPress={() => {
+            playClickSound();
+            setModalVisible(true);
+          }}
+        >
           <Feather name="alert-circle" size={21} color="#666666" />
         </TouchableOpacity>
       </View>
