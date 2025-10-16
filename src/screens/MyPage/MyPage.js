@@ -202,7 +202,7 @@ const MyPage = () => {
               navigation.navigate("ReviewIncorrectSigns");
             }}
           >
-            <AntDesign name="arrowright" size={24} color="black" />
+            <AntDesign name="arrow-right" size={24} color="black" />
           </TouchableOpacity>
         </View>
 
