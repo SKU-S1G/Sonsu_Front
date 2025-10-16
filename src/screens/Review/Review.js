@@ -11,6 +11,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import Header from "../../components/Header";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import ReviewComponent from "../../components/ReviewComponent";
 import tailwind from "tailwind-rn";
 
@@ -134,7 +135,7 @@ export default function Review() {
             navigation.navigate("ReviewIncorrectSigns");
           }}
         >
-          <AntDesign name="arrowright" size={24} color="black" />
+          <FontAwesome6 name="arrow-right" size={24} color="black" />
         </TouchableOpacity>
       </View>
 

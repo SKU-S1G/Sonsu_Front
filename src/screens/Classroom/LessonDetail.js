@@ -17,6 +17,8 @@ import {
 } from "@react-navigation/native";
 import Header from "../../components/Header";
 import Feather from "@expo/vector-icons/Feather";
+// import { FaStar } from "react-icons/fa";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import StudyBack from "../../components/StudyBack";
 import axios from "axios";
 import { API_URL } from "../../../config";
@@ -331,9 +333,9 @@ export default function LessonDetail() {
                     }}
                   >
                     {bookmarkedTopics.includes(topic.lesson_id) ? (
-                      <AntDesign name="star" size={24} color="#FFCA1A" />
+                      <FontAwesome name="star" size={24} color="#FFCA1A" />
                     ) : (
-                      <AntDesign name="staro" size={24} color="#FFCA1A" />
+                      <FontAwesome name="star-o" size={24} color="#FFCA1A" />
                     )}
                   </TouchableOpacity>
                 )}
